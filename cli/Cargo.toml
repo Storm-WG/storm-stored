@@ -1,0 +1,22 @@
+[package]
+name = "store-cli"
+description = "Storage daemon command-line interface"
+version = "0.7.0-alpha.1"
+authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
+license = "MIT"
+keywords = ["daemon", "sled", "database"]
+categories = ["database", "command-line-tools"]
+edition = "2021"
+rust-version = "1.56.0"
+readme = "../README.md"
+
+[[bin]]
+path = "src/main.rs"
+name = "store-cli"
+
+[dependencies]
+amplify = "3.12.0"
+internet2 = "0.7.0-rc.1"
+microservices = { version = "0.7.0-rc.1", default-features = false, features = ["cli"] }
+clap = { version = "3.1", features = ["derive", "env"] }
+log = "0.4.14"

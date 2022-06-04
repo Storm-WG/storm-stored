@@ -1,0 +1,70 @@
+[workspace]
+default-members = [".", "rpc", "cli"]
+members = [".", "rpc", "cli"]
+
+[package]
+name = "stored"
+description = "Storage daemon"
+version = "0.7.0-alpha.1"
+authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
+license = "MIT"
+keywords = ["daemon", "sled", "database"]
+categories = ["database"]
+edition = "2021"
+rust-version = "1.56.0"
+readme = "README.md"
+build = "build.rs"
+exclude = [".github", "Dockerfile", ".dockerignore", "contrib", "doc", "shell"]
+
+[lib]
+name = "stored"
+
+[[bin]]
+name = "stored"
+required-features = ["server"]
+
+[dependencies]
+# LNP/BP crates
+amplify = "3.12.0"
+strict_encoding = { version = "1.8.1", features = ["miniscript"] }
+internet2 = { version = "0.7.0-rc.1", features = ["keygen", "url"] }
+microservices = { version = "0.7.0-rc.1", default-features = false, features = ["node", "peer"] }
+# OS
+chrono = "0.4"
+nix = "0.19"
+log = { version = "0.4", features = ["max_level_trace", "release_max_level_debug"] }
+env_logger = "0.7"
+clap = { version = "3.1", optional = true, features = ["env", "derive"] }
+settings = { version = "0.10", package = "config", optional = true }
+configure_me = { version = "0.4", optional = true }
+dotenv = { version = "0.15", optional = true }
+colored = "2.0.0"
+shellexpand = { version = "2", optional = true }
+rpassword = { version = "5.0.1", optional = true }
+# IPC
+zmq = "0.9.2"
+
+[build-dependencies]
+amplify = "3.12.0"
+internet2 = "0.7.0-rc.1"
+microservices = { version = "0.7.0-rc.1", default-features = false, features = ["peer"] }
+clap = { version = "3.1", features = ["env"] }
+clap_complete = "3.1"
+log = { version = "0.4", features = ["max_level_trace", "release_max_level_debug"] }
+shellexpand = "2"
+configure_me_codegen = "0.4"
+
+[features]
+default = ["server"]
+
+# Server is a standalone application that runs daemons.
+# Required for all apps that can be launched from command-line shell as binaries
+# (i.e. both servers and cli)
+server = ["microservices/server", "dotenv", "clap", "settings", "configure_me",
+          "amplify/parse_arg", "shellexpand", "rpassword"]
+# Embedded is an app that contains embedded node and that talks to it through
+# integration layer
+embedded = ["microservices/embedded"]
+
+[package.metadata.configure_me]
+spec = "config_spec.toml"
