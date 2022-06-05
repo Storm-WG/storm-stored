@@ -9,155 +9,56 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use std::net::SocketAddr;
-use std::str::FromStr;
-use std::thread::sleep;
-use std::time::Duration;
+use internet2::zmqsocket::{self, ZmqType};
+use internet2::{
+    session, CreateUnmarshaller, PlainTranscoder, Session, TypedEnum, Unmarshall, Unmarshaller,
+    ZmqSocketAddr,
+};
 
-use colored::Colorize;
-use internet2::ZmqType;
-use microservices::esb::{self, BusId};
+use crate::{Error, Reply, Request};
 
-use crate::{BusMsg, ClientId, Error, OptionDetails, RpcMsg, ServiceId};
+/// Final configuration resulting from data contained in config file environment
+/// variables and command-line options. For security reasons node key is kept
+/// separately.
+#[derive(Clone, PartialEq, Eq, Debug, Display)]
+#[display(Debug)]
+pub struct Config {
+    /// ZMQ socket for RPC API
+    pub rpc_endpoint: ZmqSocketAddr,
 
-// We have just a single service bus (RPC), so we can use any id
-#[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Default, Display)]
-#[display("LNPRPC")]
-struct RpcBus;
-
-impl BusId for RpcBus {
-    type Address = ServiceId;
+    /// Verbosity level
+    pub verbose: u8,
 }
 
-type Bus = esb::EndpointList<RpcBus>;
-
-#[repr(C)]
 pub struct Client {
-    identity: ClientId,
-    response_queue: Vec<RpcMsg>,
-    esb: esb::Controller<RpcBus, BusMsg, Handler>,
+    config: Config,
+    session_rpc: session::Raw<PlainTranscoder, zmqsocket::Connection>,
+    unmarshaller: Unmarshaller<Reply>,
 }
 
 impl Client {
-    pub fn with(connect: &str) -> Result<Self, Error> {
-        use bitcoin::secp256k1::rand;
-
-        debug!("RPC socket {}", connect);
-
-        debug!("Setting up RPC client...");
-        let identity = rand::random();
-        let rpc_endpoint = match SocketAddr::from_str(connect) {
-            Ok(_) => format!("tcp://{}", connect),
-            Err(_) => format!("ipc://{}", connect),
-        };
-        let bus_config = esb::BusConfig::with_locator(
-            rpc_endpoint.parse().expect("Only ZMQ RPC is currently supported"),
-            Some(ServiceId::router()),
-        );
-        let esb = esb::Controller::with(
-            map! {
-                RpcBus => bus_config
-            },
-            Handler { identity: ServiceId::Client(identity) },
-            ZmqType::RouterConnect,
-        )?;
-
-        // We have to sleep in order for ZMQ to bootstrap
-        sleep(Duration::from_secs_f32(0.1));
-
-        Ok(Self { identity, response_queue: empty!(), esb })
+    pub fn with(config: Config) -> Result<Self, Error> {
+        debug!("Initializing runtime");
+        trace!("Connecting to xenginge daemon at {}", config.rpc_endpoint);
+        let session_rpc =
+            session::Raw::with_zmq_unencrypted(ZmqType::Req, &config.rpc_endpoint, None, None)?;
+        Ok(Self {
+            config,
+            session_rpc,
+            unmarshaller: Reply::create_unmarshaller(),
+        })
     }
 
-    pub fn identity(&self) -> ClientId { self.identity }
-
-    pub fn request(&mut self, daemon: ServiceId, req: RpcMsg) -> Result<(), Error> {
-        debug!("Executing {}", req);
-        self.esb.send_to(RpcBus, daemon, BusMsg::Rpc(req))?;
-        Ok(())
-    }
-
-    pub fn response(&mut self) -> Result<RpcMsg, Error> {
-        if self.response_queue.is_empty() {
-            for (_, _, rep) in self.esb.recv_poll()? {
-                match rep {
-                    BusMsg::Rpc(msg) => self.response_queue.push(msg),
-                }
-            }
-        }
-        Ok(self.response_queue.pop().expect("We always have at least one element"))
-    }
-
-    pub fn report_failure(&mut self) -> Result<RpcMsg, Error> {
-        match self.response()? {
-            RpcMsg::Failure(fail) => {
-                eprintln!("{}: {}", "Request failure".bright_red(), fail.to_string().red());
-                Err(Error::Rpc(fail.into_microservice_failure().into()))
-            }
-            resp => Ok(resp),
-        }
-    }
-
-    pub fn report_response(&mut self) -> Result<(), Error> {
-        let resp = self.report_failure()?;
-        println!("{:#}", resp);
-        Ok(())
-    }
-
-    pub fn report_progress(&mut self) -> Result<usize, Error> {
-        let mut counter = 0;
-        let mut finished = false;
-        while !finished {
-            finished = true;
-            counter += 1;
-            match self.report_failure()? {
-                // Failure is already covered by `report_response()`
-                RpcMsg::Progress(info) => {
-                    println!("{}", info);
-                    finished = false;
-                }
-                RpcMsg::Success(OptionDetails(Some(info))) => {
-                    println!("{}{}", "Success: ".bright_green(), info);
-                }
-                RpcMsg::Success(OptionDetails(None)) => {
-                    println!("{}", "Success".bright_green());
-                }
-                other => {
-                    eprintln!(
-                        "{}: {}",
-                        "Unexpected message".bright_yellow(),
-                        other.to_string().yellow()
-                    );
-                    return Err(Error::Other(s!("Unexpected server response")));
-                }
-            }
-        }
-        Ok(counter)
-    }
-}
-
-pub struct Handler {
-    identity: ServiceId,
-}
-
-impl esb::Handler<RpcBus> for Handler {
-    type Request = BusMsg;
-    type Error = Error;
-
-    fn identity(&self) -> ServiceId { self.identity.clone() }
-
-    fn handle(
-        &mut self,
-        _: &mut Bus,
-        _: RpcBus,
-        _: ServiceId,
-        _: BusMsg,
-    ) -> Result<(), Self::Error> {
-        // Cli does not receive replies for now
-        Ok(())
-    }
-
-    fn handle_err(&mut self, _: &mut Bus, err: esb::Error<ServiceId>) -> Result<(), Self::Error> {
-        // We simply propagate the error since it already has been reported
-        Err(err.into())
+    pub fn request(&mut self, request: Request) -> Result<Reply, Error> {
+        trace!("Sending request to the server: {:?}", request);
+        let data = request.serialize();
+        trace!("Raw request data ({} bytes): {:02X?}", data.len(), data);
+        self.session_rpc.send_raw_message(&data)?;
+        trace!("Awaiting reply");
+        let raw = self.session_rpc.recv_raw_message()?;
+        trace!("Got reply ({} bytes), parsing: {:02X?}", raw.len(), raw);
+        let reply = self.unmarshaller.unmarshall(raw.as_slice())?;
+        trace!("Reply: {:?}", reply);
+        Ok((&*reply).clone())
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "stored_rpc"
+name = "storedrpc"
 description = "Storage daemon RPC API"
 version = "0.7.0-alpha.1"
 authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
@@ -11,13 +11,14 @@ rust-version = "1.56.0"
 readme = "../README.md"
 
 [lib]
-name = "stored_rpc"
+name = "storedrpc"
 
 [dependencies]
 amplify = "3.12.0"
 strict_encoding = "1.8.1"
 internet2 = "0.7.0-rc.1"
 microservices = { version = "0.7.0-rc.2", default-features = false, features = ["client"] }
+rand = "0.8"
 serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
 serde_with = { version = "1.8", optional = true }
 serde_yaml = { version = "0.8.23", optional = true }
@@ -28,6 +29,6 @@ colored = "2.0.0"
 default = ["serde"]
 all = ["serde"]
 serde = [
-    "serde_crate", "serde_with", "serde_yaml", "bitcoin/use-serde",
+    "serde_crate", "serde_with", "serde_yaml",
     "amplify/serde", "internet2/serde", "microservices/serde",
 ]

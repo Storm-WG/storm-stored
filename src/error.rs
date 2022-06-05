@@ -9,11 +9,8 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use microservices::rpc;
-
-#[derive(Debug, Display, From, Error)]
-#[display(doc_comments)]
-#[non_exhaustive]
+#[derive(Debug, Display, Error, From)]
+#[display(inner)]
 pub enum Error {
     #[from]
     Transport(internet2::transport::Error),
@@ -21,14 +18,12 @@ pub enum Error {
     #[from]
     Presentation(internet2::presentation::Error),
 
-    /// RPC error: {0}
     #[from]
-    Rpc(rpc::Error),
+    Rpc(microservices::rpc::Failure),
 
-    /// other error type with string explanation
-    #[display(inner)]
-    #[from(internet2::addr::NoOnionSupportError)]
-    Other(String),
+    /// unexpected RPC API message; please check that the client version
+    /// matches server
+    UnexpectedApi,
 }
 
 impl microservices::error::Error for Error {}

@@ -9,11 +9,8 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use std::net::IpAddr;
-use std::str::FromStr;
-
-use internet2::{FramingProtocol, PartialNodeAddr};
-use stored_rpc::STORED_RPC_SOCKET;
+use internet2::ZmqSocketAddr;
+use storedrpc::STORED_RPC_ENDPOINT;
 
 /// Command-line tool for working with store daemon
 #[derive(Parser, Clone, PartialEq, Eq, Debug)]
@@ -29,10 +26,10 @@ pub struct Opts {
         short,
         long,
         global = true,
-        default_value = STORED_RPC_SOCKET,
-        env = "STORED_RPC_SOCKET"
+        default_value = STORED_RPC_ENDPOINT,
+        env = "STORED_RPC_ENDPOINT"
     )]
-    pub connect: String,
+    pub rpc_endpoint: ZmqSocketAddr,
 
     /// Set verbosity level.
     ///
@@ -48,4 +45,6 @@ pub struct Opts {
 /// Command-line commands:
 #[derive(Subcommand, Clone, PartialEq, Eq, Debug, Display)]
 pub enum Command {
+    #[display("none")]
+    None,
 }

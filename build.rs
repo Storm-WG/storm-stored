@@ -11,17 +11,15 @@
 
 #[macro_use]
 extern crate clap;
+#[macro_use]
+extern crate amplify;
 
 use clap::IntoApp;
 use clap_complete::generate_to;
 use clap_complete::shells::*;
 
-pub mod opts {
-    include!("src/opts.rs");
-}
-
 pub mod stored {
-    include!("src/opts.rs");
+    include!("src/bin/stored/opts.rs");
 }
 pub mod cli {
     include!("cli/src/opts.rs");
@@ -30,17 +28,13 @@ pub mod cli {
 fn main() -> Result<(), configure_me_codegen::Error> {
     let outdir = "./shell";
 
-    for app in [
-        stored::Opts::command(),
-        cli::Opts::command(),
-    ]
-    .iter_mut()
-    {
+    for app in [stored::Opts::command(), cli::Opts::command()].iter_mut() {
         let name = app.get_name().to_string();
         generate_to(Bash, app, &name, &outdir)?;
         generate_to(PowerShell, app, &name, &outdir)?;
         generate_to(Zsh, app, &name, &outdir)?;
     }
 
-    configure_me_codegen::build_script_auto()
+    // configure_me_codegen::build_script_auto()
+    Ok(())
 }

@@ -1,0 +1,99 @@
+// Storage daemon (stored): microservice frontend for different storage backends
+// used in LNP/BP nodes.
+//
+// Written in 2022 by
+//     Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>
+//
+// Copyright (C) 2022 by LNP/BP Standards Association, Switzerland.
+//
+// You should have received a copy of the MIT License along with this software.
+// If not, see <https://opensource.org/licenses/MIT>.
+
+use internet2::{
+    session, zmqsocket, CreateUnmarshaller, PlainTranscoder, Session, TypedEnum, Unmarshall,
+    Unmarshaller, ZmqType,
+};
+use microservices::node::TryService;
+use storedrpc::{Reply, Request};
+
+use super::{Config, Error};
+
+pub fn run(config: Config) -> Result<(), Error> {
+    let runtime = Runtime::init(config)?;
+
+    runtime.run_or_panic("stored");
+
+    Ok(())
+}
+
+pub struct Runtime {
+    /// Original configuration object
+    pub(super) config: Config,
+
+    /// Stored sessions
+    pub(super) session_rpc: session::Raw<PlainTranscoder, zmqsocket::Connection>,
+
+    /// Unmarshaller instance used for parsing RPC request
+    pub(super) unmarshaller: Unmarshaller<Request>,
+}
+
+impl Runtime {
+    pub fn init(config: Config) -> Result<Self, Error> {
+        // debug!("Initializing storage provider {:?}", config.storage_conf());
+        // let storage = storage::FileDriver::with(config.storage_conf())?;
+
+        debug!("Opening RPC API socket {}", config.rpc_endpoint);
+        let session_rpc =
+            session::Raw::with_zmq_unencrypted(ZmqType::Rep, &config.rpc_endpoint, None, None)?;
+
+        info!("Stored runtime started successfully");
+
+        Ok(Self {
+            config,
+            // storage,
+            session_rpc,
+            unmarshaller: Request::create_unmarshaller(),
+        })
+    }
+}
+
+impl TryService for Runtime {
+    type ErrorType = Error;
+
+    fn try_run_loop(mut self) -> Result<(), Self::ErrorType> {
+        loop {
+            match self.run() {
+                Ok(_) => debug!("API request processing complete"),
+                Err(err) => {
+                    error!("Error processing API request: {}", err);
+                    Err(err)?;
+                }
+            }
+        }
+    }
+}
+
+impl Runtime {
+    fn run(&mut self) -> Result<(), Error> {
+        trace!("Awaiting for ZMQ RPC requests...");
+        let raw = self.session_rpc.recv_raw_message()?;
+        let reply = self.rpc_process(raw).unwrap_or_else(|err| err);
+        trace!("Preparing ZMQ RPC reply: {:?}", reply);
+        let data = reply.serialize();
+        trace!("Sending {} bytes back to the client over ZMQ RPC", data.len());
+        self.session_rpc.send_raw_message(&data)?;
+        Ok(())
+    }
+}
+
+impl Runtime {
+    pub(super) fn rpc_process(&mut self, raw: Vec<u8>) -> Result<Reply, Reply> {
+        trace!("Got {} bytes over ZMQ RPC", raw.len());
+        let message = (&*self.unmarshaller.unmarshall(raw.as_slice())?).clone();
+        debug!("Received ZMQ RPC request #{}: {}", message.get_type(), message);
+        match message {
+            _ => Ok(Reply::Success),
+        }
+        .map_err(storedrpc::Error::into)
+    }
+}

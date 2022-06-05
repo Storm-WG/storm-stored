@@ -10,42 +10,34 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 #![recursion_limit = "256"]
-// Coding conventions
-#![deny(
-    non_upper_case_globals,
-    non_camel_case_types,
-    non_snake_case,
-    unused_mut,
-    unused_imports,
-    dead_code,
-    missing_docs
-)]
 
 //! Main executable for stored: storage microservice.
 
 #[macro_use]
 extern crate log;
 
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use std::path::{Path, PathBuf};
+mod opts;
 
 use clap::Parser;
-use internet2::LocalNode;
-use stored::lnpd::{self, Command, Opts};
-use stored::{Config, Error, LogStyle};
-use strict_encoding::{StrictDecode, StrictEncode};
+use stored::{Config, Error};
+
+use crate::opts::Opts;
 
 fn main() -> Result<(), Error> {
     println!("stored: storage microservice");
 
-    let mut opts = Opts::parse();
+    let opts = Opts::parse();
     trace!("Command-line arguments: {:?}", &opts);
-    opts.process();
-    trace!("Processed arguments: {:?}", &opts);
 
-    let config: Config = opts.shared.clone().into();
-    trace!("Daemon configuration: {:?}", &config);
-    debug!("CTL RPC socket {}", &config.ctl_endpoint);
+    let mut config = Config {
+        data_dir: opts.data_dir,
+        rpc_endpoint: opts.rpc_endpoint,
+        verbose: opts.verbose,
+    };
+    trace!("Daemon configuration: {:?}", config);
+    config.process();
+    trace!("Processed configuration: {:?}", config);
+    debug!("CTL RPC socket {}", config.rpc_endpoint);
 
     /*
     use self::internal::ResultExt;
@@ -57,7 +49,7 @@ fn main() -> Result<(), Error> {
      */
 
     debug!("Starting runtime ...");
-    stored::run(config).expect("running stored runtime");
+    stored::service::run(config).expect("running stored runtime");
 
     unreachable!()
 }

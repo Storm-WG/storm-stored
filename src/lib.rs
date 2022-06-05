@@ -9,31 +9,18 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-#![recursion_limit = "256"]
-
 #[macro_use]
 extern crate amplify;
-// #[macro_use]
-// extern crate strict_encoding;
+#[macro_use]
+extern crate strict_encoding;
 #[macro_use]
 extern crate internet2;
 #[macro_use]
 extern crate log;
 
-#[cfg(feature = "serde")]
-extern crate serde_crate as serde;
-//#[cfg(feature = "serde")]
-//#[macro_use]
-//extern crate serde_with;
-
-pub mod client;
+mod config;
 mod error;
-mod reply;
-mod request;
+pub mod service;
 
+pub use config::Config;
 pub use error::Error;
-pub use reply::Reply;
-pub use request::Request;
-
-// TODO: Change port
-pub const STORED_RPC_ENDPOINT: &'static str = "lnpz://0.0.0.0:61399?api=rpc";

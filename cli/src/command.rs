@@ -9,21 +9,20 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use std::str::FromStr;
-
-use internet2::{NodeAddr, RemoteSocketAddr, ToNodeAddr, ToRemoteNodeAddr};
-use stored_rpc::{self, Client, Error, RpcMsg};
 use microservices::shell::Exec;
+use storedrpc::client::Client;
+use storedrpc::{self, Error};
 
-use crate::opts::Command;
+use crate::{Command, Opts};
 
-impl Exec for Command {
+impl Exec for Opts {
     type Client = Client;
     type Error = Error;
 
-    fn exec(self, runtime: &mut Self::Client) -> Result<(), Self::Error> {
-        debug!("Performing {:?}: {}", self, self);
-        match self {
+    fn exec(self, _runtime: &mut Self::Client) -> Result<(), Self::Error> {
+        debug!("Performing {:?}", self.command);
+        match self.command {
+            Command::None => {}
         }
         Ok(())
     }

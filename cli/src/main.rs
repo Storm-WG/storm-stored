@@ -10,16 +10,6 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 #![recursion_limit = "256"]
-// Coding conventions
-#![deny(
-    non_upper_case_globals,
-    non_camel_case_types,
-    non_snake_case,
-    unused_mut,
-    unused_imports,
-    dead_code
-    // missing_docs,
-)]
 
 //! Command-line interface to store daemon
 
@@ -34,21 +24,38 @@ mod command;
 mod opts;
 
 use clap::Parser;
-use lnp_rpc::Client;
+use colored::Colorize;
 use microservices::shell::{Exec, LogLevel};
+use storedrpc::client::{Client, Config};
 
 pub use crate::opts::{Command, Opts};
+
+impl From<Opts> for Config {
+    fn from(opts: Opts) -> Self {
+        Config {
+            rpc_endpoint: opts
+                .rpc_endpoint
+                .try_into()
+                .expect("The provided socket address must be a valid ZMQ socket"),
+            verbose: opts.verbose,
+        }
+    }
+}
 
 fn main() {
     println!("store-cli: command-line tool for working with LNP node");
 
     let opts = Opts::parse();
     LogLevel::from_verbosity_flag_count(opts.verbose).apply();
+    trace!("Command-line arguments: {:#?}", &opts);
 
-    trace!("Command-line arguments: {:?}", opts);
+    let config: Config = opts.clone().into();
+    trace!("Tool configuration: {:#?}", &config);
 
-    let mut client = Client::with(&opts.connect).expect("Error initializing client");
+    let mut client = Client::with(config).expect("Error initializing client");
 
-    trace!("Executing command: {:?}", opts.command);
-    opts.command.exec(&mut client).unwrap_or_else(|err| eprintln!("{}", err));
+    trace!("Executing command: {}", opts.command);
+    opts.exec(&mut client).unwrap_or_else(|err| {
+        eprintln!("{} {}\n", "Error:".bright_red(), err.to_string().replace(": ", "\n  > ").red())
+    });
 }
