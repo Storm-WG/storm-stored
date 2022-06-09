@@ -31,7 +31,7 @@ mod error;
 mod reply;
 mod request;
 
-pub use error::Error;
+pub use error::FailureCode;
 pub use reply::Reply;
 pub use request::Request;
 

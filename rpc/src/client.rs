@@ -14,8 +14,9 @@ use internet2::session::LocalSession;
 use internet2::{
     CreateUnmarshaller, SendRecvMessage, TypedEnum, Unmarshall, Unmarshaller, ZmqSocketType,
 };
+use microservices::rpc::ServerError;
 
-use crate::{Error, Reply, Request};
+use crate::{FailureCode, Reply, Request};
 
 /// Final configuration resulting from data contained in config file environment
 /// variables and command-line options. For security reasons node key is kept
@@ -38,7 +39,7 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn with(config: Config) -> Result<Self, Error> {
+    pub fn with(config: Config) -> Result<Self, ServerError<FailureCode>> {
         debug!("Initializing runtime");
         let ctx = zmq::Context::new();
 
@@ -52,7 +53,7 @@ impl Client {
         })
     }
 
-    pub fn request(&mut self, request: Request) -> Result<Reply, Error> {
+    pub fn request(&mut self, request: Request) -> Result<Reply, ServerError<FailureCode>> {
         trace!("Sending request to the server: {:?}", request);
         let data = request.serialize();
         trace!("Raw request data ({} bytes): {:02X?}", data.len(), data);

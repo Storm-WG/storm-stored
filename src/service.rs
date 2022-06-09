@@ -14,11 +14,12 @@ use internet2::{
     CreateUnmarshaller, SendRecvMessage, TypedEnum, Unmarshall, Unmarshaller, ZmqSocketType,
 };
 use microservices::node::TryService;
+use microservices::rpc::ClientError;
 use storedrpc::{Reply, Request};
 
-use super::{Config, Error};
+use super::Config;
 
-pub fn run(config: Config) -> Result<(), Error> {
+pub fn run(config: Config) -> Result<(), ClientError> {
     let runtime = Runtime::init(config)?;
 
     runtime.run_or_panic("stored");
@@ -38,7 +39,7 @@ pub struct Runtime {
 }
 
 impl Runtime {
-    pub fn init(config: Config) -> Result<Self, Error> {
+    pub fn init(config: Config) -> Result<Self, ClientError> {
         // debug!("Initializing storage provider {:?}", config.storage_conf());
         // let storage = storage::FileDriver::with(config.storage_conf())?;
 
@@ -59,7 +60,7 @@ impl Runtime {
 }
 
 impl TryService for Runtime {
-    type ErrorType = Error;
+    type ErrorType = ClientError;
 
     fn try_run_loop(mut self) -> Result<(), Self::ErrorType> {
         loop {
@@ -75,7 +76,7 @@ impl TryService for Runtime {
 }
 
 impl Runtime {
-    fn run(&mut self) -> Result<(), Error> {
+    fn run(&mut self) -> Result<(), ClientError> {
         trace!("Awaiting for ZMQ RPC requests...");
         let raw = self.session_rpc.recv_raw_message()?;
         let reply = self.rpc_process(raw).unwrap_or_else(|err| err);
@@ -95,6 +96,5 @@ impl Runtime {
         match message {
             _ => Ok(Reply::Success),
         }
-        .map_err(storedrpc::Error::into)
     }
 }

@@ -9,15 +9,16 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use microservices::rpc::ServerError;
 use microservices::shell::Exec;
 use storedrpc::client::Client;
-use storedrpc::{self, Error};
+use storedrpc::FailureCode;
 
 use crate::{Command, Opts};
 
 impl Exec for Opts {
     type Client = Client;
-    type Error = Error;
+    type Error = ServerError<FailureCode>;
 
     fn exec(self, _runtime: &mut Self::Client) -> Result<(), Self::Error> {
         debug!("Performing {:?}", self.command);

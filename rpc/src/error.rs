@@ -11,24 +11,22 @@
 
 use microservices::rpc;
 
-#[derive(Debug, Display, From, Error)]
-#[display(doc_comments)]
-#[non_exhaustive]
-pub enum Error {
-    #[from]
-    Transport(internet2::transport::Error),
-
-    #[from]
-    Presentation(internet2::presentation::Error),
-
-    /// RPC error: {0}
-    #[from]
-    Rpc(rpc::Error),
-
-    /// other error type with string explanation
-    #[display(inner)]
-    #[from(internet2::addr::NoOnionSupportError)]
-    Other(String),
+#[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
+pub enum FailureCode {
+    /// Catch-all
+    Unknown = 0xFFF,
 }
 
-impl microservices::error::Error for Error {}
+impl From<u16> for FailureCode {
+    fn from(value: u16) -> Self {
+        match value {
+            _ => FailureCode::Unknown,
+        }
+    }
+}
+
+impl From<FailureCode> for u16 {
+    fn from(code: FailureCode) -> Self { code as u16 }
+}
+
+impl rpc::FailureCodeExt for FailureCode {}

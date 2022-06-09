@@ -19,11 +19,12 @@ extern crate log;
 mod opts;
 
 use clap::Parser;
-use stored::{Config, Error};
+use microservices::error::BootstrapError;
+use stored::{Config, LaunchError};
 
 use crate::opts::Opts;
 
-fn main() -> Result<(), Error> {
+fn main() -> Result<(), BootstrapError<LaunchError>> {
     println!("stored: storage microservice");
 
     let opts = Opts::parse();

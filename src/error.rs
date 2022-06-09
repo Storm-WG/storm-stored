@@ -9,21 +9,8 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-#[derive(Debug, Display, Error, From)]
-#[display(inner)]
-pub enum Error {
-    #[from]
-    Transport(internet2::transport::Error),
+#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Hash, Debug, Display, Error, From)]
+#[display(doc_comments)]
+pub enum LaunchError {}
 
-    #[from]
-    Presentation(internet2::presentation::Error),
-
-    #[from]
-    Rpc(microservices::rpc::Failure),
-
-    /// unexpected RPC API message; please check that the client version
-    /// matches server
-    UnexpectedApi,
-}
-
-impl microservices::error::Error for Error {}
+impl microservices::error::Error for LaunchError {}

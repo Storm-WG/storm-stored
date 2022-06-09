@@ -1020,8 +1020,8 @@ dependencies = [
 
 [[package]]
 name = "microservices"
-version = "0.8.0-beta.1"
-source = "git+https://github.com/Internet2-WG/rust-microservices#66701df86ac0a76d0ade1db07ac266c29147de67"
+version = "0.8.0-rc.2"
+source = "git+https://github.com/Internet2-WG/rust-microservices#1d8b8a143a216a7c9abc52c92d8e49070e66d846"
 dependencies = [
  "amplify",
  "clap",
