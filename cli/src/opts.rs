@@ -9,7 +9,7 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use internet2::ZmqSocketAddr;
+use internet2::addr::ServiceAddr;
 use storedrpc::STORED_RPC_ENDPOINT;
 
 /// Command-line tool for working with store daemon
@@ -29,7 +29,7 @@ pub struct Opts {
         default_value = STORED_RPC_ENDPOINT,
         env = "STORED_RPC_ENDPOINT"
     )]
-    pub rpc_endpoint: ZmqSocketAddr,
+    pub rpc_endpoint: ServiceAddr,
 
     /// Set verbosity level.
     ///

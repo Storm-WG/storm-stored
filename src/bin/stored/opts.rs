@@ -12,7 +12,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, ValueHint};
-use internet2::ZmqSocketAddr;
+use internet2::addr::ServiceAddr;
 use storedrpc::STORED_RPC_ENDPOINT;
 
 #[cfg(any(target_os = "linux"))]
@@ -66,5 +66,5 @@ pub struct Opts {
         value_hint = ValueHint::FilePath,
         default_value = STORED_RPC_ENDPOINT
     )]
-    pub rpc_endpoint: ZmqSocketAddr,
+    pub rpc_endpoint: ServiceAddr,
 }

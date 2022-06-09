@@ -9,9 +9,9 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use internet2::session::LocalSession;
 use internet2::{
-    session, zmqsocket, CreateUnmarshaller, PlainTranscoder, Session, TypedEnum, Unmarshall,
-    Unmarshaller, ZmqType,
+    CreateUnmarshaller, SendRecvMessage, TypedEnum, Unmarshall, Unmarshaller, ZmqSocketType,
 };
 use microservices::node::TryService;
 use storedrpc::{Reply, Request};
@@ -31,7 +31,7 @@ pub struct Runtime {
     pub(super) config: Config,
 
     /// Stored sessions
-    pub(super) session_rpc: session::Raw<PlainTranscoder, zmqsocket::Connection>,
+    pub(super) session_rpc: LocalSession,
 
     /// Unmarshaller instance used for parsing RPC request
     pub(super) unmarshaller: Unmarshaller<Request>,
@@ -43,8 +43,9 @@ impl Runtime {
         // let storage = storage::FileDriver::with(config.storage_conf())?;
 
         debug!("Opening RPC API socket {}", config.rpc_endpoint);
+        let ctx = zmq::Context::new();
         let session_rpc =
-            session::Raw::with_zmq_unencrypted(ZmqType::Rep, &config.rpc_endpoint, None, None)?;
+            LocalSession::connect(ZmqSocketType::Rep, &config.rpc_endpoint, None, None, &ctx)?;
 
         info!("Stored runtime started successfully");
 

@@ -36,4 +36,4 @@ pub use reply::Reply;
 pub use request::Request;
 
 // TODO: Change port
-pub const STORED_RPC_ENDPOINT: &'static str = "lnpz://0.0.0.0:61399?api=rpc";
+pub const STORED_RPC_ENDPOINT: &'static str = "0.0.0.0:61399";

@@ -10,12 +10,12 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 use internet2::presentation;
-use microservices::rpc::Failure;
-use microservices::rpc_connection;
+use microservices::rpc;
 
 use crate::Error;
 
-#[derive(Clone, Debug, Display, From, Api)]
+#[derive(Clone, Eq, PartialEq, Hash, Debug, Display, From)]
+#[derive(Api)]
 #[api(encoding = "strict")]
 #[non_exhaustive]
 pub enum Reply {
@@ -28,27 +28,27 @@ pub enum Reply {
     #[api(type = 0x0000)]
     #[display("failure({0:#})")]
     #[from]
-    Failure(Failure),
+    Failure(rpc::Failure),
 }
 
-impl rpc_connection::Reply for Reply {}
+impl rpc::Reply for Reply {}
 
 impl From<presentation::Error> for Reply {
     fn from(err: presentation::Error) -> Self {
         // TODO: Save error code taken from `Error::to_value()` after
         //       implementation of `ToValue` trait and derive macro for enums
-        Reply::Failure(Failure {
+        Reply::Failure(rpc::Failure {
             code: 0,
             info: format!("{}", err),
         })
     }
 }
 
-impl From<Error> for Failure {
+impl From<Error> for rpc::Failure {
     fn from(err: Error) -> Self {
         match err {
             // Error::ServerFailure(failure) => failure,
-            err => Failure {
+            err => rpc::Failure {
                 code: 1,
                 info: err.to_string(),
             },

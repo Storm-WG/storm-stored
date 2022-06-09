@@ -9,10 +9,10 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use internet2::zmqsocket::{self, ZmqType};
+use internet2::addr::ServiceAddr;
+use internet2::session::LocalSession;
 use internet2::{
-    session, CreateUnmarshaller, PlainTranscoder, Session, TypedEnum, Unmarshall, Unmarshaller,
-    ZmqSocketAddr,
+    CreateUnmarshaller, SendRecvMessage, TypedEnum, Unmarshall, Unmarshaller, ZmqSocketType,
 };
 
 use crate::{Error, Reply, Request};
@@ -24,7 +24,7 @@ use crate::{Error, Reply, Request};
 #[display(Debug)]
 pub struct Config {
     /// ZMQ socket for RPC API
-    pub rpc_endpoint: ZmqSocketAddr,
+    pub rpc_endpoint: ServiceAddr,
 
     /// Verbosity level
     pub verbose: u8,
@@ -32,16 +32,19 @@ pub struct Config {
 
 pub struct Client {
     config: Config,
-    session_rpc: session::Raw<PlainTranscoder, zmqsocket::Connection>,
+    // TODO: Replace with RpcSession once its implementation is completed
+    session_rpc: LocalSession,
     unmarshaller: Unmarshaller<Reply>,
 }
 
 impl Client {
     pub fn with(config: Config) -> Result<Self, Error> {
         debug!("Initializing runtime");
+        let ctx = zmq::Context::new();
+
         trace!("Connecting to xenginge daemon at {}", config.rpc_endpoint);
         let session_rpc =
-            session::Raw::with_zmq_unencrypted(ZmqType::Req, &config.rpc_endpoint, None, None)?;
+            LocalSession::connect(ZmqSocketType::Req, &config.rpc_endpoint, None, None, &ctx)?;
         Ok(Self {
             config,
             session_rpc,

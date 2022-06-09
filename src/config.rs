@@ -12,7 +12,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use internet2::zmqsocket::ZmqSocketAddr;
+use internet2::addr::ServiceAddr;
 
 /// Final configuration resulting from data contained in config file environment
 /// variables and command-line options. For security reasons node key is kept
@@ -21,7 +21,7 @@ use internet2::zmqsocket::ZmqSocketAddr;
 #[display(Debug)]
 pub struct Config {
     /// ZMQ socket for RPC API
-    pub rpc_endpoint: ZmqSocketAddr,
+    pub rpc_endpoint: ServiceAddr,
 
     /// Data location
     pub data_dir: PathBuf,
@@ -45,7 +45,7 @@ impl Config {
 
         for dir in vec![&mut self.rpc_endpoint] {
             match dir {
-                ZmqSocketAddr::Ipc(ref mut path) => {
+                ServiceAddr::Ipc(ref mut path) => {
                     me.process_dir(path);
                 }
                 _ => {}
