@@ -26,7 +26,7 @@ required-features = ["server"]
 [dependencies]
 # LNP/BP crates
 amplify = "3.12.0"
-strict_encoding = { version = "1.8.1", features = ["miniscript"] }
+strict_encoding = "1.8.3"
 internet2 = { version = "0.8.0-beta.1", features = ["keygen", "zmq"] }
 microservices = { version = "0.8.0-rc.1", git = "https://github.com/Internet2-WG/rust-microservices", default-features = false, features = ["node", "peer"] }
 storedrpc = { version = "0.8.0-alpha.1", path = "rpc" }
@@ -44,8 +44,6 @@ dotenv = { version = "0.15", optional = true }
 colored = "2.0.0"
 shellexpand = { version = "2", optional = true }
 rpassword = { version = "5.0.1", optional = true }
-# IPC
-zmq = { package = "zmq2", version = "0.5.0" }
 
 [build-dependencies]
 amplify = "3.12.0"

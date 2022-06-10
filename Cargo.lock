@@ -1040,15 +1040,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "miniscript"
-version = "7.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da39fc7a8adea97a677337b0091779dd86349226b869053af496584a9b9e5847"
-dependencies = [
- "bitcoin",
-]
-
-[[package]]
 name = "nix"
 version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1778,7 +1769,6 @@ dependencies = [
  "sled",
  "storedrpc",
  "strict_encoding",
- "zmq2",
 ]
 
 [[package]]
@@ -1808,7 +1798,6 @@ dependencies = [
  "bitcoin",
  "bitcoin_hashes",
  "chrono",
- "miniscript",
  "strict_encoding_derive",
 ]
 
