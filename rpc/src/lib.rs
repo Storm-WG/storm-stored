@@ -38,4 +38,4 @@ pub use request::{ChunkInfo, Request, StoreReq};
 pub use types::{Chunk, ChunkId};
 
 // TODO: Change port
-pub const STORED_RPC_ENDPOINT: &'static str = "0.0.0.0:61399";
+pub const STORED_RPC_ENDPOINT: &str = "0.0.0.0:61399";

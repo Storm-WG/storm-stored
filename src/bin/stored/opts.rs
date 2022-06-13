@@ -16,20 +16,20 @@ use internet2::addr::ServiceAddr;
 use storedrpc::STORED_RPC_ENDPOINT;
 
 #[cfg(any(target_os = "linux"))]
-pub const STORED_DATA_DIR: &'static str = "~/.storm";
+pub const STORED_DATA_DIR: &str = "~/.storm";
 #[cfg(any(target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-pub const STORED_DATA_DIR: &'static str = "~/.storm";
+pub const STORED_DATA_DIR: &str = "~/.storm";
 #[cfg(target_os = "macos")]
-pub const STORED_DATA_DIR: &'static str = "~/Library/Application Support/Storm Node";
+pub const STORED_DATA_DIR: &str = "~/Library/Application Support/Storm Node";
 #[cfg(target_os = "windows")]
-pub const STORED_DATA_DIR: &'static str = "~\\AppData\\Local\\Storm Node";
+pub const STORED_DATA_DIR: &str = "~\\AppData\\Local\\Storm Node";
 #[cfg(target_os = "ios")]
-pub const STORED_DATA_DIR: &'static str = "~/Documents";
+pub const STORED_DATA_DIR: &str = "~/Documents";
 #[cfg(target_os = "android")]
-pub const STORED_DATA_DIR: &'static str = ".";
+pub const STORED_DATA_DIR: &str = ".";
 
-pub const STORED_CONFIG: &'static str = "{data_dir}/stored.toml";
-pub const STORED_STORAGE_FILE: &'static str = "data";
+pub const STORED_CONFIG: &str = "{data_dir}/stored.toml";
+pub const STORED_STORAGE_FILE: &str = "data";
 
 /// Command-line arguments
 #[derive(Parser)]

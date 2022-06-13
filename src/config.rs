@@ -35,9 +35,8 @@ pub struct Config {
 
 impl Config {
     pub fn process(&mut self) {
-        self.data_dir = PathBuf::from(
-            shellexpand::tilde(&self.data_dir.to_string_lossy().to_string()).to_string(),
-        );
+        self.data_dir =
+            PathBuf::from(shellexpand::tilde(&self.data_dir.display().to_string()).to_string());
 
         let me = self.clone();
         let mut data_dir = self.data_dir.to_string_lossy().into_owned();
@@ -47,11 +46,8 @@ impl Config {
         fs::create_dir_all(&self.data_dir).expect("Unable to access data directory");
 
         for dir in vec![&mut self.rpc_endpoint] {
-            match dir {
-                ServiceAddr::Ipc(ref mut path) => {
-                    me.process_dir(path);
-                }
-                _ => {}
+            if let ServiceAddr::Ipc(ref mut path) = dir {
+                me.process_dir(path);
             }
         }
     }

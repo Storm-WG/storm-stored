@@ -33,10 +33,7 @@ pub use crate::opts::{Command, Opts};
 impl From<Opts> for Config {
     fn from(opts: Opts) -> Self {
         Config {
-            rpc_endpoint: opts
-                .rpc_endpoint
-                .try_into()
-                .expect("The provided socket address must be a valid ZMQ socket"),
+            rpc_endpoint: opts.rpc_endpoint,
             verbose: opts.verbose,
         }
     }
