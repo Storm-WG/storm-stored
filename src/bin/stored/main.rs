@@ -20,6 +20,7 @@ mod opts;
 
 use clap::Parser;
 use microservices::error::BootstrapError;
+use microservices::shell::LogLevel;
 use stored::{Config, LaunchError};
 
 use crate::opts::Opts;
@@ -28,6 +29,7 @@ fn main() -> Result<(), BootstrapError<LaunchError>> {
     println!("stored: storage microservice");
 
     let opts = Opts::parse();
+    LogLevel::from_verbosity_flag_count(opts.verbose).apply();
     trace!("Command-line arguments: {:?}", &opts);
 
     let mut config = Config {

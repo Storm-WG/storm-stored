@@ -69,6 +69,6 @@ pub struct Opts {
     pub rpc_endpoint: ServiceAddr,
 
     /// Database name to use.
-    #[clap(long)]
+    #[clap()]
     pub db: Vec<String>,
 }

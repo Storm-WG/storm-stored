@@ -19,7 +19,7 @@ _stored() {
 
     case "${cmd}" in
         stored)
-            opts="-h -V -v -d -x --help --version --verbose --data-dir --rpc-endpoint --db"
+            opts="-h -V -v -d -x --help --version --verbose --data-dir --rpc-endpoint <DB>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -38,10 +38,6 @@ _stored() {
                     return 0
                     ;;
                 -x)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --db)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
