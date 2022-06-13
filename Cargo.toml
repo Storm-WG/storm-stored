@@ -26,18 +26,19 @@ required-features = ["server"]
 [dependencies]
 # LNP/BP crates
 amplify = "3.12.0"
-strict_encoding = "1.8.3"
+strict_encoding = "1.8.8"
 internet2 = { version = "0.8.0-beta.1", features = ["keygen", "zmq"] }
-microservices = { version = "0.8.0-rc.1", git = "https://github.com/Internet2-WG/rust-microservices", default-features = false, features = ["node", "peer"] }
+microservices = { version = "0.8.0-rc.2", git = "https://github.com/Internet2-WG/rust-microservices", default-features = false, features = ["node", "peer"] }
 storedrpc = { version = "0.8.0-alpha.1", path = "rpc" }
 # DB
 sled = "0.34"
 # OS
+zmq = { package = "zmq2", version = "0.5.0" }
 chrono = "0.4"
 nix = "0.19"
 log = { version = "0.4", features = ["max_level_trace", "release_max_level_debug"] }
 env_logger = "0.7"
-clap = { version = "3.1", optional = true, features = ["env", "derive"] }
+clap = { version = "~3.1.18", optional = true, features = ["env", "derive"] }
 settings = { version = "0.10", package = "config", optional = true }
 configure_me = { version = "0.4", optional = true }
 dotenv = { version = "0.15", optional = true }
@@ -50,8 +51,8 @@ amplify = "3.12.0"
 internet2 = "0.8.0-beta.1"
 microservices = { version = "0.8.0-rc.1", git = "https://github.com/Internet2-WG/rust-microservices", default-features = false, features = ["peer"] }
 storedrpc = { version = "0.8.0-alpha.1", path = "rpc" }
-clap = { version = "3.1", features = ["env"] }
-clap_complete = "3.1"
+clap = { version = "~3.1.18", features = ["env"] }
+clap_complete = "~3.1.4"
 log = { version = "0.4", features = ["max_level_trace", "release_max_level_debug"] }
 shellexpand = "2"
 configure_me_codegen = "0.4"
