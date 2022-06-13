@@ -13,8 +13,8 @@
 
 #[macro_use]
 extern crate amplify;
-// #[macro_use]
-// extern crate strict_encoding;
+#[macro_use]
+extern crate strict_encoding;
 #[macro_use]
 extern crate internet2;
 #[macro_use]
@@ -30,10 +30,12 @@ pub mod client;
 mod error;
 mod reply;
 mod request;
+mod types;
 
 pub use error::FailureCode;
 pub use reply::Reply;
-pub use request::Request;
+pub use request::{ChunkInfo, Request, StoreReq};
+pub use types::{Chunk, ChunkId};
 
 // TODO: Change port
 pub const STORED_RPC_ENDPOINT: &'static str = "0.0.0.0:61399";

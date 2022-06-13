@@ -358,6 +358,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "commit_verify"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eac05c39ea303b263fff5ac3af85110e8ed306bccf4222ba11d434db3b4f78ba"
+dependencies = [
+ "amplify",
+ "bitcoin_hashes",
+ "strict_encoding",
+]
+
+[[package]]
 name = "config"
 version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1755,6 +1766,7 @@ dependencies = [
  "clap",
  "clap_complete",
  "colored",
+ "commit_verify",
  "config",
  "configure_me",
  "configure_me_codegen",
@@ -1777,7 +1789,9 @@ name = "storedrpc"
 version = "0.8.0-alpha.1"
 dependencies = [
  "amplify",
+ "bitcoin_hashes",
  "colored",
+ "commit_verify",
  "internet2",
  "log",
  "microservices",

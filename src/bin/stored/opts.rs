@@ -16,13 +16,13 @@ use internet2::addr::ServiceAddr;
 use storedrpc::STORED_RPC_ENDPOINT;
 
 #[cfg(any(target_os = "linux"))]
-pub const STORED_DATA_DIR: &'static str = "~/.xengine";
+pub const STORED_DATA_DIR: &'static str = "~/.storm";
 #[cfg(any(target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-pub const STORED_DATA_DIR: &'static str = "~/.xengine";
+pub const STORED_DATA_DIR: &'static str = "~/.storm";
 #[cfg(target_os = "macos")]
-pub const STORED_DATA_DIR: &'static str = "~/Library/Application Support/Xengine";
+pub const STORED_DATA_DIR: &'static str = "~/Library/Application Support/Storm Node";
 #[cfg(target_os = "windows")]
-pub const STORED_DATA_DIR: &'static str = "~\\AppData\\Local\\MyCitadel";
+pub const STORED_DATA_DIR: &'static str = "~\\AppData\\Local\\Storm Node";
 #[cfg(target_os = "ios")]
 pub const STORED_DATA_DIR: &'static str = "~/Documents";
 #[cfg(target_os = "android")]
@@ -36,13 +36,13 @@ pub const STORED_STORAGE_FILE: &'static str = "data";
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 #[clap(author, version, name = "stored", about = "stored: storage microservice daemon")]
 pub struct Opts {
-    /// Set verbosity level
+    /// Set verbosity level.
     ///
     /// Can be used multiple times to increase verbosity
     #[clap(short, long, global = true, parse(from_occurrences))]
     pub verbose: u8,
 
-    /// Data directory path
+    /// Data directory path.
     ///
     /// Path to the directory that contains stored data, and where ZMQ RPC
     /// socket files are located
@@ -56,7 +56,7 @@ pub struct Opts {
     )]
     pub data_dir: PathBuf,
 
-    /// ZMQ socket name/address for stpred node RPC interface
+    /// ZMQ socket name/address for stpred node RPC interface.
     ///
     /// Internal interface for control PRC protocol communications.
     #[clap(
@@ -67,4 +67,8 @@ pub struct Opts {
         default_value = STORED_RPC_ENDPOINT
     )]
     pub rpc_endpoint: ServiceAddr,
+
+    /// Database name to use.
+    #[clap(long)]
+    pub db: Vec<String>,
 }

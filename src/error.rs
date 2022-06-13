@@ -9,8 +9,46 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Hash, Debug, Display, Error, From)]
+use microservices::rpc;
+use storedrpc::{FailureCode, Reply};
+
+#[derive(Clone, PartialEq, Eq, Debug, Display, Error, From)]
 #[display(doc_comments)]
-pub enum LaunchError {}
+pub enum LaunchError {
+    #[from]
+    #[display(inner)]
+    Database(sled::Error),
+}
 
 impl microservices::error::Error for LaunchError {}
+
+#[derive(Clone, PartialEq, Eq, Debug, Display, Error, From)]
+#[display(doc_comments)]
+pub enum ServerError {
+    #[from]
+    #[display(inner)]
+    Database(sled::Error),
+
+    /// unknown database table '{0}'
+    UnknownTable(String),
+
+    #[from]
+    #[display(inner)]
+    Encoding(strict_encoding::Error),
+}
+
+impl microservices::error::Error for ServerError {}
+
+impl From<ServerError> for Reply {
+    fn from(err: ServerError) -> Self {
+        let code = match err {
+            ServerError::Database(_) => FailureCode::Database,
+            ServerError::UnknownTable(_) => FailureCode::Database,
+            ServerError::Encoding(_) => FailureCode::Encoding,
+        };
+        Reply::Failure(rpc::Failure {
+            code: code.into(),
+            info: err.to_string(),
+        })
+    }
+}

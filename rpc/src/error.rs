@@ -15,6 +15,12 @@ use microservices::rpc;
 pub enum FailureCode {
     /// Catch-all
     Unknown = 0xFFF,
+
+    /// Database
+    Database = 0x01,
+
+    /// Encoding
+    Encoding = 0x02,
 }
 
 impl From<u16> for FailureCode {
@@ -27,6 +33,10 @@ impl From<u16> for FailureCode {
 
 impl From<FailureCode> for u16 {
     fn from(code: FailureCode) -> Self { code as u16 }
+}
+
+impl From<FailureCode> for rpc::FailureCode<FailureCode> {
+    fn from(code: FailureCode) -> Self { rpc::FailureCode::Other(code) }
 }
 
 impl rpc::FailureCodeExt for FailureCode {}

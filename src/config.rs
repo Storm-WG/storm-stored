@@ -9,6 +9,7 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use std::collections::HashSet;
 use std::fs;
 use std::path::PathBuf;
 
@@ -25,6 +26,8 @@ pub struct Config {
 
     /// Data location
     pub data_dir: PathBuf,
+
+    pub databases: HashSet<String>,
 
     /// Verbosity level
     pub verbose: u8,

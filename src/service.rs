@@ -9,17 +9,22 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use std::collections::HashMap;
+
+use commit_verify::commit_encode::ConsensusCommit;
 use internet2::session::LocalSession;
 use internet2::{
     CreateUnmarshaller, SendRecvMessage, TypedEnum, Unmarshall, Unmarshaller, ZmqSocketType,
 };
+use microservices::error::BootstrapError;
 use microservices::node::TryService;
 use microservices::rpc::ClientError;
-use storedrpc::{Reply, Request};
+use storedrpc::{Chunk, ChunkId, ChunkInfo, Reply, Request, StoreReq};
 
 use super::Config;
+use crate::{LaunchError, ServerError};
 
-pub fn run(config: Config) -> Result<(), ClientError> {
+pub fn run(config: Config) -> Result<(), BootstrapError<LaunchError>> {
     let runtime = Runtime::init(config)?;
 
     runtime.run_or_panic("stored");
@@ -36,10 +41,14 @@ pub struct Runtime {
 
     /// Unmarshaller instance used for parsing RPC request
     pub(super) unmarshaller: Unmarshaller<Request>,
+
+    pub(super) db: sled::Db,
+
+    pub(super) trees: HashMap<String, sled::Tree>,
 }
 
 impl Runtime {
-    pub fn init(config: Config) -> Result<Self, ClientError> {
+    pub fn init(config: Config) -> Result<Self, BootstrapError<LaunchError>> {
         // debug!("Initializing storage provider {:?}", config.storage_conf());
         // let storage = storage::FileDriver::with(config.storage_conf())?;
 
@@ -48,14 +57,30 @@ impl Runtime {
         let session_rpc =
             LocalSession::connect(ZmqSocketType::Rep, &config.rpc_endpoint, None, None, &ctx)?;
 
+        let (db, trees) = Self::init_db(&config)?;
+
         info!("Stored runtime started successfully");
 
         Ok(Self {
             config,
-            // storage,
             session_rpc,
             unmarshaller: Request::create_unmarshaller(),
+            db,
+            trees,
         })
+    }
+
+    fn init_db(config: &Config) -> Result<(sled::Db, HashMap<String, sled::Tree>), LaunchError> {
+        let mut db_path = config.data_dir.clone();
+        db_path.push("sled.db");
+        debug!("Opening database at {}", db_path.display());
+        let db = sled::open(db_path)?;
+        let trees = config
+            .databases
+            .iter()
+            .map(|name| db.open_tree(name).map(|tree| (name.clone(), tree)))
+            .collect::<Result<HashMap<_, _>, _>>()?;
+        Ok((db, trees))
     }
 }
 
@@ -91,10 +116,27 @@ impl Runtime {
 impl Runtime {
     pub(super) fn rpc_process(&mut self, raw: Vec<u8>) -> Result<Reply, Reply> {
         trace!("Got {} bytes over ZMQ RPC", raw.len());
-        let message = (&*self.unmarshaller.unmarshall(raw.as_slice())?).clone();
-        debug!("Received ZMQ RPC request #{}: {}", message.get_type(), message);
-        match message {
-            _ => Ok(Reply::Success),
+        let request = (&*self.unmarshaller.unmarshall(raw.as_slice())?).clone();
+        debug!("Received ZMQ RPC request #{}: {}", request.get_type(), request);
+        match request {
+            Request::Store(StoreReq { db, chunk }) => self.store(db, chunk),
+            Request::Retrieve(ChunkInfo { db, chunk_id }) => self.retrieve(db, chunk_id),
         }
+        .map_err(Reply::from)
+    }
+
+    fn store(&self, db: String, chunk: Chunk) -> Result<Reply, ServerError> {
+        let tree = self.trees.get(&db).ok_or(ServerError::UnknownTable(db))?;
+        let chunk_id = chunk.consensus_commit();
+        tree.insert(chunk_id, chunk.as_ref())?;
+        Ok(Reply::ChunkId(chunk_id))
+    }
+
+    fn retrieve(&self, db: String, chunk_id: ChunkId) -> Result<Reply, ServerError> {
+        let tree = self.trees.get(&db).ok_or(ServerError::UnknownTable(db))?;
+        Ok(match tree.get(chunk_id)? {
+            None => Reply::ChunkAbsent(chunk_id),
+            Some(data) => Reply::Chunk(data.as_ref().try_into()?),
+        })
     }
 }

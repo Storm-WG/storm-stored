@@ -23,4 +23,4 @@ mod error;
 pub mod service;
 
 pub use config::Config;
-pub use error::LaunchError;
+pub use error::{LaunchError, ServerError};

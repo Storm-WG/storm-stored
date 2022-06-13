@@ -12,7 +12,7 @@
 use internet2::presentation;
 use microservices::rpc;
 
-use crate::error::FailureCode;
+use crate::{Chunk, ChunkId, FailureCode};
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Display, From)]
 #[derive(Api)]
@@ -21,7 +21,7 @@ use crate::error::FailureCode;
 pub enum Reply {
     // Responses to CLI
     // ----------------
-    #[api(type = 0x0002)]
+    #[api(type = 0x0001)]
     #[display("success({0})")]
     Success,
 
@@ -29,6 +29,18 @@ pub enum Reply {
     #[display("failure({0:#})")]
     #[from]
     Failure(rpc::Failure<FailureCode>),
+
+    #[api(type = 0x0011)]
+    #[display("chunk_id({0})")]
+    ChunkId(ChunkId),
+
+    #[api(type = 0x0010)]
+    #[display("chunk(...)")]
+    Chunk(Chunk),
+
+    #[api(type = 0x0013)]
+    #[display("chunk_absent({0})")]
+    ChunkAbsent(ChunkId),
 }
 
 impl rpc::Reply for Reply {}

@@ -19,6 +19,7 @@ _stored() {
 '--data-dir=[Data directory path]:DATA_DIR:_files -/' \
 '-x+[ZMQ socket name/address for stpred node RPC interface]:RPC_ENDPOINT:_files' \
 '--rpc-endpoint=[ZMQ socket name/address for stpred node RPC interface]:RPC_ENDPOINT:_files' \
+'*--db=[Database name to use]:DB: ' \
 '-h[Print help information]' \
 '--help[Print help information]' \
 '-V[Print version information]' \
