@@ -1755,11 +1755,11 @@ dependencies = [
  "internet2",
  "log",
  "microservices",
- "storedrpc",
+ "store_rpc",
 ]
 
 [[package]]
-name = "stored"
+name = "store_daemon"
 version = "0.8.0-alpha.1"
 dependencies = [
  "amplify",
@@ -1780,14 +1780,14 @@ dependencies = [
  "rpassword",
  "shellexpand",
  "sled",
- "storedrpc",
+ "store_rpc",
  "storm-core",
  "strict_encoding",
  "zmq2",
 ]
 
 [[package]]
-name = "storedrpc"
+name = "store_rpc"
 version = "0.8.0-alpha.1"
 dependencies = [
  "amplify",

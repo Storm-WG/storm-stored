@@ -10,7 +10,7 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 use internet2::addr::ServiceAddr;
-use storedrpc::STORED_RPC_ENDPOINT;
+use store_rpc::STORED_RPC_ENDPOINT;
 
 /// Command-line tool for working with store daemon
 #[derive(Parser, Clone, PartialEq, Eq, Debug)]

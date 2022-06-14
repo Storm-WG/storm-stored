@@ -31,6 +31,7 @@ mod error;
 mod reply;
 mod request;
 
+pub use client::Client;
 pub use error::FailureCode;
 pub use reply::Reply;
 pub use request::{ChunkInfo, Request, StoreReq};

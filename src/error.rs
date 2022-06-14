@@ -10,7 +10,7 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 use microservices::rpc;
-use storedrpc::{FailureCode, Reply};
+use store_rpc::{FailureCode, Reply};
 
 #[derive(Clone, PartialEq, Eq, Debug, Display, Error, From)]
 #[display(doc_comments)]

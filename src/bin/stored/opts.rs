@@ -13,7 +13,7 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueHint};
 use internet2::addr::ServiceAddr;
-use storedrpc::STORED_RPC_ENDPOINT;
+use store_rpc::STORED_RPC_ENDPOINT;
 
 #[cfg(any(target_os = "linux"))]
 pub const STORED_DATA_DIR: &str = "~/.storm";

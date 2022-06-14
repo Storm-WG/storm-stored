@@ -11,8 +11,7 @@
 
 use microservices::rpc::ServerError;
 use microservices::shell::Exec;
-use storedrpc::client::Client;
-use storedrpc::FailureCode;
+use store_rpc::{Client, FailureCode};
 
 use crate::{Command, Opts};
 

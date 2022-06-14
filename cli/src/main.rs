@@ -26,7 +26,7 @@ mod opts;
 use clap::Parser;
 use colored::Colorize;
 use microservices::shell::{Exec, LogLevel};
-use storedrpc::client::{Client, Config};
+use store_rpc::client::{Client, Config};
 
 pub use crate::opts::{Command, Opts};
 
