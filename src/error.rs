@@ -24,7 +24,7 @@ impl microservices::error::Error for LaunchError {}
 
 #[derive(Clone, PartialEq, Eq, Debug, Display, Error, From)]
 #[display(doc_comments)]
-pub enum ServerError {
+pub enum DaemonError {
     #[from]
     #[display(inner)]
     Database(sled::Error),
@@ -37,14 +37,14 @@ pub enum ServerError {
     Encoding(strict_encoding::Error),
 }
 
-impl microservices::error::Error for ServerError {}
+impl microservices::error::Error for DaemonError {}
 
-impl From<ServerError> for Reply {
-    fn from(err: ServerError) -> Self {
+impl From<DaemonError> for Reply {
+    fn from(err: DaemonError) -> Self {
         let code = match err {
-            ServerError::Database(_) => FailureCode::Database,
-            ServerError::UnknownTable(_) => FailureCode::Database,
-            ServerError::Encoding(_) => FailureCode::Encoding,
+            DaemonError::Database(_) => FailureCode::Database,
+            DaemonError::UnknownTable(_) => FailureCode::Database,
+            DaemonError::Encoding(_) => FailureCode::Encoding,
         };
         Reply::Failure(rpc::Failure {
             code: code.into(),

@@ -15,6 +15,8 @@ use bitcoin_hashes::sha256;
 use commit_verify::{commit_encode, ConsensusCommit};
 use strict_encoding::MediumVec;
 
+// TODO: Move module to storm-core lib
+
 pub type ChunkId = sha256::Hash;
 
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Default, From)]

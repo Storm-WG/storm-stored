@@ -22,7 +22,7 @@ use microservices::rpc::ClientError;
 use storedrpc::{Chunk, ChunkId, ChunkInfo, Reply, Request, StoreReq};
 
 use super::Config;
-use crate::{LaunchError, ServerError};
+use crate::{DaemonError, LaunchError};
 
 pub fn run(config: Config) -> Result<(), BootstrapError<LaunchError>> {
     let runtime = Runtime::init(config)?;
@@ -125,15 +125,15 @@ impl Runtime {
         .map_err(Reply::from)
     }
 
-    fn store(&self, db: String, chunk: Chunk) -> Result<Reply, ServerError> {
-        let tree = self.trees.get(&db).ok_or(ServerError::UnknownTable(db))?;
+    fn store(&self, db: String, chunk: Chunk) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&db).ok_or(DaemonError::UnknownTable(db))?;
         let chunk_id = chunk.consensus_commit();
         tree.insert(chunk_id, chunk.as_ref())?;
         Ok(Reply::ChunkId(chunk_id))
     }
 
-    fn retrieve(&self, db: String, chunk_id: ChunkId) -> Result<Reply, ServerError> {
-        let tree = self.trees.get(&db).ok_or(ServerError::UnknownTable(db))?;
+    fn retrieve(&self, db: String, chunk_id: ChunkId) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&db).ok_or(DaemonError::UnknownTable(db))?;
         Ok(match tree.get(chunk_id)? {
             None => Reply::ChunkAbsent(chunk_id),
             Some(data) => Reply::Chunk(data.as_ref().try_into()?),

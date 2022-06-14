@@ -6,13 +6,6 @@ FROM rust:1.59.0-slim-bullseye as builder
 ARG SRC_DIR=/usr/local/src/stored
 ARG BUILDER_DIR
 
-RUN apt-get update -y \
-    && apt-get install -y \
-        libsqlite3-dev \
-        libssl-dev \
-        libzmq3-dev \
-        pkg-config
-
 WORKDIR "$SRC_DIR"
 
 COPY doc ${SRC_DIR}/doc
@@ -34,12 +27,6 @@ ARG BUILDER_DIR
 ARG BIN_DIR=/usr/local/bin
 ARG DATA_DIR=/var/lib/lnp
 ARG USER=lnpd
-
-RUN apt-get update -y \
-    && apt-get install -y \
-        libzmq3-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN adduser --home "${DATA_DIR}" --shell /bin/bash --disabled-login \
         --gecos "${USER} user" ${USER}

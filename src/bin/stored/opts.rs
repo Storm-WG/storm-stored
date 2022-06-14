@@ -56,7 +56,7 @@ pub struct Opts {
     )]
     pub data_dir: PathBuf,
 
-    /// ZMQ socket name/address for stpred node RPC interface.
+    /// ZMQ socket name/address for store daemon RPC interface.
     ///
     /// Internal interface for control PRC protocol communications.
     #[clap(

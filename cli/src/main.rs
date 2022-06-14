@@ -40,7 +40,7 @@ impl From<Opts> for Config {
 }
 
 fn main() {
-    println!("store-cli: command-line tool for working with LNP node");
+    println!("store-cli: command-line tool for working with Store daemon");
 
     let opts = Opts::parse();
     LogLevel::from_verbosity_flag_count(opts.verbose).apply();
