@@ -1032,7 +1032,8 @@ dependencies = [
 [[package]]
 name = "microservices"
 version = "0.8.0-rc.2"
-source = "git+https://github.com/Internet2-WG/rust-microservices#1d8b8a143a216a7c9abc52c92d8e49070e66d846"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da3dae2a4fdc8ff79de8aaa1d455681dc04dabd60be67f8a1db612c8230cd0b2"
 dependencies = [
  "amplify",
  "clap",
@@ -1789,7 +1790,6 @@ name = "storedrpc"
 version = "0.8.0-alpha.1"
 dependencies = [
  "amplify",
- "bitcoin_hashes",
  "colored",
  "commit_verify",
  "internet2",
