@@ -21,8 +21,7 @@ use microservices::node::TryService;
 use microservices::rpc::ClientError;
 use storedrpc::{Chunk, ChunkId, ChunkInfo, Reply, Request, StoreReq};
 
-use super::Config;
-use crate::{DaemonError, LaunchError};
+use crate::{Config, DaemonError, LaunchError};
 
 pub fn run(config: Config) -> Result<(), BootstrapError<LaunchError>> {
     let runtime = Runtime::init(config)?;
@@ -114,7 +113,7 @@ impl Runtime {
 }
 
 impl Runtime {
-    pub(super) fn rpc_process(&mut self, raw: Vec<u8>) -> Result<Reply, Reply> {
+    pub(crate) fn rpc_process(&mut self, raw: Vec<u8>) -> Result<Reply, Reply> {
         trace!("Got {} bytes over ZMQ RPC", raw.len());
         let request = (&*self.unmarshaller.unmarshall(raw.as_slice())?).clone();
         debug!("Received ZMQ RPC request #{}: {}", request.get_type(), request);

@@ -9,19 +9,4 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-#[macro_use]
-extern crate amplify;
-#[macro_use]
-extern crate strict_encoding;
-#[macro_use]
-extern crate internet2;
-#[macro_use]
-extern crate log;
-
-mod config;
-mod error;
-mod stored;
-
-pub use config::Config;
-pub use error::{DaemonError, LaunchError};
-pub use stored::service;
+pub mod service;
