@@ -30,12 +30,10 @@ pub mod client;
 mod error;
 mod reply;
 mod request;
-mod types;
 
 pub use error::FailureCode;
 pub use reply::Reply;
 pub use request::{ChunkInfo, Request, StoreReq};
-pub use types::{Chunk, ChunkId};
 
 // TODO: Change port
 pub const STORED_RPC_ENDPOINT: &str = "0.0.0.0:61399";

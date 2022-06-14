@@ -19,7 +19,8 @@ use internet2::{
 use microservices::error::BootstrapError;
 use microservices::node::TryService;
 use microservices::rpc::ClientError;
-use storedrpc::{Chunk, ChunkId, ChunkInfo, Reply, Request, StoreReq};
+use storedrpc::{ChunkInfo, Reply, Request, StoreReq};
+use storm::{Chunk, ChunkId};
 
 use crate::{Config, DaemonError, LaunchError};
 

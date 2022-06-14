@@ -11,8 +11,9 @@
 
 use internet2::presentation;
 use microservices::rpc;
+use storm::{Chunk, ChunkId};
 
-use crate::{Chunk, ChunkId, FailureCode};
+use crate::FailureCode;
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Display, From)]
 #[derive(Api)]
