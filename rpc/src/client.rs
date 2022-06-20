@@ -16,8 +16,9 @@ use internet2::{
 };
 use microservices::rpc::ServerError;
 use microservices::ZMQ_CONTEXT;
+use storm::{Chunk, ChunkId};
 
-use crate::{FailureCode, Reply, Request};
+use crate::{FailureCode, Reply, Request, StoreReq};
 
 pub struct Client {
     // TODO: Replace with RpcSession once its implementation is completed
@@ -36,6 +37,20 @@ impl Client {
             session_rpc,
             unmarshaller: Reply::create_unmarshaller(),
         })
+    }
+
+    pub fn store(
+        &mut self,
+        db: String,
+        data: impl AsRef<[u8]>,
+    ) -> Result<ChunkId, ServerError<FailureCode>> {
+        let chunk = Chunk::try_from(data.as_ref())?;
+        let reply = self.request(Request::Store(StoreReq { db, chunk }))?;
+        match reply {
+            Reply::ChunkId(chunk_id) => Ok(chunk_id),
+            Reply::Failure(failure) => Err(failure.into()),
+            wrong => unreachable!("unexpected response {:?} from store service API", wrong),
+        }
     }
 
     pub fn request(&mut self, request: Request) -> Result<Reply, ServerError<FailureCode>> {

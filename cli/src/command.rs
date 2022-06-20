@@ -23,12 +23,12 @@ impl Exec for Opts {
 
     fn exec(self, runtime: &mut Self::Client) -> Result<(), Self::Error> {
         eprint!("Performing {:?} ... ", self.command);
-        let reply = match self.command {
+        match self.command {
             Command::Store { db, file } => {
                 let data = read_file_or_stdin(file).expect("unable to read the file");
-                let chunk = Chunk::try_from(data.as_slice()).expect("file is too large");
-                let reply = runtime.request(Request::Store(StoreReq { db, chunk }))?;
-                Some(reply)
+                let chunk_id = runtime.store(db, &data)?;
+                eprint!("Stored chunk id ");
+                println!("{}", chunk_id);
             }
             Command::Retrieve {
                 db,
@@ -52,14 +52,7 @@ impl Exec for Opts {
                     }
                     _ => unreachable!("unexpected server response"),
                 }
-                None
             }
-        };
-        match reply {
-            Some(Reply::Success) => eprintln!("success"),
-            Some(Reply::Failure(failure)) => eprintln!("failure: {}", failure),
-            None => {}
-            _ => unreachable!("unknown server response"),
         }
         Ok(())
     }
