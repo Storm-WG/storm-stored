@@ -12,10 +12,6 @@
 #[macro_use]
 extern crate amplify;
 #[macro_use]
-extern crate strict_encoding;
-#[macro_use]
-extern crate internet2;
-#[macro_use]
 extern crate log;
 
 mod config;
@@ -25,3 +21,5 @@ mod stored;
 pub use config::Config;
 pub use error::{DaemonError, LaunchError};
 pub use stored::service;
+
+pub(crate) const STORED_STORAGE_FILE: &str = "sled.db";

@@ -25,7 +25,7 @@ _stored() {
 '--version[Print version information]' \
 '*-v[Set verbosity level]' \
 '*--verbose[Set verbosity level]' \
-'*::db -- Database name to use:' \
+'*::tables -- Database table names to use:' \
 && ret=0
 }
 

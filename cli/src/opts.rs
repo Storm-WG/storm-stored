@@ -49,10 +49,10 @@ pub struct Opts {
 #[derive(Subcommand, Clone, PartialEq, Eq, Debug, Display)]
 pub enum Command {
     /// Stores file into database
-    #[display("store '{db}' '{file:?}'")]
+    #[display("store '{table}' '{file:?}'")]
     Store {
-        /// Database to store file in
-        db: String,
+        /// Database table to store file in
+        table: String,
 
         /// File to put into database. If no file is given, data are read from
         /// STDIN.
@@ -63,10 +63,10 @@ pub enum Command {
     /// file name, or onto stdout if no output file is specified.
     ///
     /// The output file, if exists, gets truncated/overwritten.
-    #[display("retrieve '{db}' {chunk_id}")]
+    #[display("retrieve '{table}' {chunk_id}")]
     Retrieve {
-        /// Database to request file.
-        db: String,
+        /// Database table to request file.
+        table: String,
 
         /// Information (file chunk) identifier returned before with the `store`
         /// command.

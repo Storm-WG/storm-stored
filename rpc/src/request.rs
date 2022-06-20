@@ -15,6 +15,11 @@ use storm::{Chunk, ChunkId};
 #[derive(Api)]
 #[api(encoding = "strict")]
 pub enum Request {
+    /// Connects table in storage. If table is absent, creates one.
+    #[api(type = 0xa0)]
+    #[display("use({0})")]
+    Use(String),
+
     #[api(type = 0x10)]
     #[display("store({0})")]
     Store(StoreReq),
@@ -26,16 +31,16 @@ pub enum Request {
 
 #[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
 #[derive(NetworkEncode, NetworkDecode)]
-#[display("{db}, ...")]
+#[display("{table}, ...")]
 pub struct StoreReq {
-    pub db: String,
+    pub table: String,
     pub chunk: Chunk,
 }
 
 #[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
 #[derive(NetworkEncode, NetworkDecode)]
-#[display("{db}, {chunk_id}")]
+#[display("{table}, {chunk_id}")]
 pub struct ChunkInfo {
-    pub db: String,
+    pub table: String,
     pub chunk_id: ChunkId,
 }

@@ -23,7 +23,7 @@ use microservices::ZMQ_CONTEXT;
 use store_rpc::{ChunkInfo, Reply, Request, StoreReq};
 use storm::{Chunk, ChunkId};
 
-use crate::{Config, DaemonError, LaunchError};
+use crate::{Config, DaemonError, LaunchError, STORED_STORAGE_FILE};
 
 pub fn run(config: Config) -> Result<(), BootstrapError<LaunchError>> {
     let runtime = Runtime::init(config)?;
@@ -77,7 +77,7 @@ impl Runtime {
 
     fn init_db(config: &Config) -> Result<(sled::Db, HashMap<String, sled::Tree>), LaunchError> {
         let mut db_path = config.data_dir.clone();
-        db_path.push("sled.db");
+        db_path.push(STORED_STORAGE_FILE);
         debug!("Opening database at {}", db_path.display());
         let db = sled::open(db_path)?;
         let trees = config
@@ -124,21 +124,28 @@ impl Runtime {
         let request = (&*self.unmarshaller.unmarshall(raw.as_slice())?).clone();
         debug!("Received ZMQ RPC request #{}: {}", request.get_type(), request);
         match request {
-            Request::Store(StoreReq { db, chunk }) => self.store(db, chunk),
-            Request::Retrieve(ChunkInfo { db, chunk_id }) => self.retrieve(db, chunk_id),
+            Request::Use(table) => self.use_table(table),
+            Request::Store(StoreReq { table, chunk }) => self.store(table, chunk),
+            Request::Retrieve(ChunkInfo { table, chunk_id }) => self.retrieve(table, chunk_id),
         }
         .map_err(Reply::from)
     }
 
-    fn store(&self, db: String, chunk: Chunk) -> Result<Reply, DaemonError> {
-        let tree = self.trees.get(&db).ok_or(DaemonError::UnknownTable(db))?;
+    fn use_table(&mut self, table: String) -> Result<Reply, DaemonError> {
+        let tree = self.db.open_tree(&table)?;
+        self.trees.insert(table, tree);
+        Ok(Reply::Success)
+    }
+
+    fn store(&self, table: String, chunk: Chunk) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         let chunk_id = chunk.consensus_commit();
         tree.insert(chunk_id, chunk.as_ref())?;
         Ok(Reply::ChunkId(chunk_id))
     }
 
-    fn retrieve(&self, db: String, chunk_id: ChunkId) -> Result<Reply, DaemonError> {
-        let tree = self.trees.get(&db).ok_or(DaemonError::UnknownTable(db))?;
+    fn retrieve(&self, table: String, chunk_id: ChunkId) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         Ok(match tree.get(chunk_id)? {
             None => Reply::ChunkAbsent(chunk_id),
             Some(data) => Reply::Chunk(data.as_ref().try_into()?),

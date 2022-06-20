@@ -11,8 +11,7 @@
 
 use microservices::rpc::ServerError;
 use microservices::shell::Exec;
-use store_rpc::{ChunkInfo, Client, FailureCode, Reply, Request, StoreReq};
-use storm::Chunk;
+use store_rpc::{Client, FailureCode};
 
 use crate::util::{read_file_or_stdin, write_file_or_stdout};
 use crate::{Command, Opts};
@@ -24,35 +23,29 @@ impl Exec for Opts {
     fn exec(self, runtime: &mut Self::Client) -> Result<(), Self::Error> {
         eprint!("Performing {:?} ... ", self.command);
         match self.command {
-            Command::Store { db, file } => {
+            Command::Store { table: db, file } => {
                 let data = read_file_or_stdin(file).expect("unable to read the file");
                 let chunk_id = runtime.store(db, &data)?;
                 eprint!("Stored chunk id ");
                 println!("{}", chunk_id);
             }
             Command::Retrieve {
-                db,
+                table,
                 chunk_id,
                 output,
-            } => {
-                let reply = runtime.request(Request::Retrieve(ChunkInfo { db, chunk_id }))?;
-                match reply {
-                    Reply::Chunk(chunk) => {
-                        eprintln!("success");
-                        let output_filename = output
-                            .as_deref()
-                            .map(|f| f.display().to_string())
-                            .unwrap_or(s!("STDOUT"));
-                        eprint!("Writing to {} ... ", output_filename);
-                        write_file_or_stdout(chunk, output).expect("unable to write to the file");
-                        eprintln!("success");
-                    }
-                    Reply::ChunkAbsent(id) => {
-                        eprintln!("unknown chunk");
-                    }
-                    _ => unreachable!("unexpected server response"),
+            } => match runtime.retrieve(table, chunk_id)? {
+                Some(chunk) => {
+                    eprintln!("success");
+                    let output_filename =
+                        output.as_deref().map(|f| f.display().to_string()).unwrap_or(s!("STDOUT"));
+                    eprint!("Writing to {} ... ", output_filename);
+                    write_file_or_stdout(chunk, output).expect("unable to write to the file");
+                    eprintln!("success");
                 }
-            }
+                None => {
+                    eprintln!("unknown chunk");
+                }
+            },
         }
         Ok(())
     }

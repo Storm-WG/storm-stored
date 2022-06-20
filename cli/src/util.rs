@@ -10,7 +10,7 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 use std::io::{Read, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::{fs, io};
 
 pub fn open_file_or_stdin(filename: Option<impl AsRef<Path>>) -> Result<Box<dyn Read>, io::Error> {

@@ -40,7 +40,7 @@ _arguments "${_arguments_options[@]}" \
 '--help[Print help information]' \
 '*-v[Set verbosity level]' \
 '*--verbose[Set verbosity level]' \
-':db -- Database to store file in:' \
+':table -- Database table to store file in:' \
 '::file -- File to put into database. If no file is given, data are read from STDIN:' \
 && ret=0
 ;;
@@ -52,7 +52,7 @@ _arguments "${_arguments_options[@]}" \
 '--help[Print help information]' \
 '*-v[Set verbosity level]' \
 '*--verbose[Set verbosity level]' \
-':db -- Database to request file:' \
+':table -- Database table to request file:' \
 ':chunk-id -- Information (file chunk) identifier returned before with the `store` command:' \
 '::output -- File for output. The data are printed to stdout if no file is given:' \
 && ret=0

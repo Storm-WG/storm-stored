@@ -36,7 +36,7 @@ fn main() -> Result<(), BootstrapError<LaunchError>> {
         data_dir: opts.data_dir,
         rpc_endpoint: opts.rpc_endpoint,
         verbose: opts.verbose,
-        databases: opts.db.iter().cloned().collect(),
+        databases: opts.tables.iter().cloned().collect(),
     };
     trace!("Daemon configuration: {:?}", config);
     config.process();

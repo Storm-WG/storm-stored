@@ -16,8 +16,7 @@ use internet2::addr::ServiceAddr;
 use store_rpc::STORED_DATA_DIR;
 
 pub const STORED_CONFIG: &str = "{data_dir}/stored.toml";
-pub const STORED_STORAGE_FILE: &str = "data";
-// We redifine constant here and do not use one from `store_rpc` since we need
+// We redefine constant here and do not use one from `store_rpc` since we need
 // to update the default path if the daemon was provided with a custom
 // `data_dir`.
 const STORED_RPC_ENDPOINT: &str = "{data_dir}/store";
@@ -59,7 +58,7 @@ pub struct Opts {
     )]
     pub rpc_endpoint: ServiceAddr,
 
-    /// Database name to use.
+    /// Database table names to use.
     #[clap()]
-    pub db: Vec<String>,
+    pub tables: Vec<String>,
 }

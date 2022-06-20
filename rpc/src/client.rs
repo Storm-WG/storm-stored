@@ -18,7 +18,7 @@ use microservices::rpc::ServerError;
 use microservices::ZMQ_CONTEXT;
 use storm::{Chunk, ChunkId};
 
-use crate::{FailureCode, Reply, Request, StoreReq};
+use crate::{ChunkInfo, FailureCode, Reply, Request, StoreReq};
 
 pub struct Client {
     // TODO: Replace with RpcSession once its implementation is completed
@@ -39,21 +39,38 @@ impl Client {
         })
     }
 
+    pub fn use_table(&mut self, table: String) -> Result<(), ServerError<FailureCode>> {
+        self.request(Request::Use(table))?.success_or_failure()
+    }
+
     pub fn store(
         &mut self,
-        db: String,
+        table: String,
         data: impl AsRef<[u8]>,
     ) -> Result<ChunkId, ServerError<FailureCode>> {
         let chunk = Chunk::try_from(data.as_ref())?;
-        let reply = self.request(Request::Store(StoreReq { db, chunk }))?;
+        let reply = self.request(Request::Store(StoreReq { table, chunk }))?;
         match reply {
             Reply::ChunkId(chunk_id) => Ok(chunk_id),
             Reply::Failure(failure) => Err(failure.into()),
-            wrong => unreachable!("unexpected response {:?} from store service API", wrong),
+            _ => Err(ServerError::UnexpectedServerResponse),
         }
     }
 
-    pub fn request(&mut self, request: Request) -> Result<Reply, ServerError<FailureCode>> {
+    pub fn retrieve(
+        &mut self,
+        table: String,
+        chunk_id: ChunkId,
+    ) -> Result<Option<Chunk>, ServerError<FailureCode>> {
+        let reply = self.request(Request::Retrieve(ChunkInfo { table, chunk_id }))?;
+        match reply {
+            Reply::Chunk(chunk) => Ok(Some(chunk)),
+            Reply::ChunkAbsent(_) => Ok(None),
+            _ => Err(ServerError::UnexpectedServerResponse),
+        }
+    }
+
+    fn request(&mut self, request: Request) -> Result<Reply, ServerError<FailureCode>> {
         trace!("Sending request to the server: {:?}", request);
         let data = request.serialize();
         trace!("Raw request data ({} bytes): {:02X?}", data.len(), data);

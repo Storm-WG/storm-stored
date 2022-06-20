@@ -11,6 +11,7 @@
 
 use internet2::presentation;
 use microservices::rpc;
+use microservices::rpc::ServerError;
 use storm::{Chunk, ChunkId};
 
 use crate::FailureCode;
@@ -52,5 +53,15 @@ impl From<presentation::Error> for Reply {
             code: rpc::FailureCode::Presentation,
             info: format!("{}", err),
         })
+    }
+}
+
+impl Reply {
+    pub fn success_or_failure(self) -> Result<(), ServerError<FailureCode>> {
+        match self {
+            Reply::Success => Ok(()),
+            Reply::Failure(failure) => Err(failure.into()),
+            _ => Err(ServerError::UnexpectedServerResponse),
+        }
     }
 }
