@@ -11,18 +11,41 @@
 
 use microservices::rpc::ServerError;
 use microservices::shell::Exec;
-use store_rpc::{Client, FailureCode};
+use store_rpc::{ChunkInfo, Client, FailureCode, Reply, Request, StoreReq};
+use storm::Chunk;
 
+use crate::util::read_file_or_stdin;
 use crate::{Command, Opts};
 
 impl Exec for Opts {
     type Client = Client;
     type Error = ServerError<FailureCode>;
 
-    fn exec(self, _runtime: &mut Self::Client) -> Result<(), Self::Error> {
-        debug!("Performing {:?}", self.command);
-        match self.command {
-            Command::None => {}
+    fn exec(self, runtime: &mut Self::Client) -> Result<(), Self::Error> {
+        eprint!("Performing {:?} ... ", self.command);
+        let reply = match self.command {
+            Command::Store { db, file } => {
+                let data = read_file_or_stdin(file).expect("unable to read the file");
+                let chunk = Chunk::try_from(data.as_slice()).expect("file is too large");
+                runtime.request(Request::Store(StoreReq { db, chunk }))?
+            }
+            Command::Retrieve { .. } => {
+                todo!()
+            }
+        };
+        match reply {
+            Reply::Success => eprintln!("success"),
+            Reply::Failure(failure) => eprintln!("failure: {}", failure),
+            Reply::ChunkId(chunk_id) => {
+                eprintln!("success");
+                println!("{}", chunk_id)
+            }
+            Reply::Chunk(chunk) => {
+                eprintln!("success");
+                // eprintln!("Saving to ...");
+            }
+            Reply::ChunkAbsent(_) => {}
+            _ => unreachable!("unknown server response"),
         }
         Ok(())
     }

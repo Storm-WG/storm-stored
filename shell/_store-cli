@@ -32,7 +32,7 @@ _store-cli() {
         (( CURRENT += 1 ))
         curcontext="${curcontext%:*:*}:store-cli-command-$line[1]:"
         case $line[1] in
-            (none)
+            (store)
 _arguments "${_arguments_options[@]}" \
 '-c+[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
 '--connect=[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
@@ -40,6 +40,21 @@ _arguments "${_arguments_options[@]}" \
 '--help[Print help information]' \
 '*-v[Set verbosity level]' \
 '*--verbose[Set verbosity level]' \
+':db -- Database to store file in:' \
+'::file -- File to put into database. If no file is given, data are read from STDIN:' \
+&& ret=0
+;;
+(retrieve)
+_arguments "${_arguments_options[@]}" \
+'-c+[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'--connect=[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'-h[Print help information]' \
+'--help[Print help information]' \
+'*-v[Set verbosity level]' \
+'*--verbose[Set verbosity level]' \
+':db -- Database to request file:' \
+':chunk-id -- Information (file chunk) identifier returned before with the `store` command:' \
+'::output -- File for output. The data are printed to stdout if no file is given:' \
 && ret=0
 ;;
 (help)
@@ -59,7 +74,8 @@ esac
 (( $+functions[_store-cli_commands] )) ||
 _store-cli_commands() {
     local commands; commands=(
-'none:' \
+'store:Stores file into database' \
+'retrieve:Retrieves file from the database and outputs it into the provided file name, or onto stdout if no output file is specified' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'store-cli commands' commands "$@"
@@ -69,10 +85,15 @@ _store-cli__help_commands() {
     local commands; commands=()
     _describe -t commands 'store-cli help commands' commands "$@"
 }
-(( $+functions[_store-cli__none_commands] )) ||
-_store-cli__none_commands() {
+(( $+functions[_store-cli__retrieve_commands] )) ||
+_store-cli__retrieve_commands() {
     local commands; commands=()
-    _describe -t commands 'store-cli none commands' commands "$@"
+    _describe -t commands 'store-cli retrieve commands' commands "$@"
+}
+(( $+functions[_store-cli__store_commands] )) ||
+_store-cli__store_commands() {
+    local commands; commands=()
+    _describe -t commands 'store-cli store commands' commands "$@"
 }
 
 _store-cli "$@"

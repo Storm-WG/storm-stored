@@ -1784,6 +1784,7 @@ dependencies = [
  "microservices",
  "shellexpand",
  "store_rpc",
+ "storm-core",
 ]
 
 [[package]]

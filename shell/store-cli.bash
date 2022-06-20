@@ -15,8 +15,11 @@ _store-cli() {
             help)
                 cmd+="__help"
                 ;;
-            none)
-                cmd+="__none"
+            retrieve)
+                cmd+="__retrieve"
+                ;;
+            store)
+                cmd+="__store"
                 ;;
             *)
                 ;;
@@ -25,7 +28,7 @@ _store-cli() {
 
     case "${cmd}" in
         store__cli)
-            opts="-h -V -c -v --help --version --connect --verbose none help"
+            opts="-h -V -c -v --help --version --connect --verbose store retrieve help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -68,8 +71,30 @@ _store-cli() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        store__cli__none)
-            opts="-h -c -v --help --connect --verbose"
+        store__cli__retrieve)
+            opts="-h -c -v --help --connect --verbose <DB> <CHUNK_ID> <OUTPUT>"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --connect)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        store__cli__store)
+            opts="-h -c -v --help --connect --verbose <DB> <FILE>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0

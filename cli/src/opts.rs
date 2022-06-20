@@ -9,8 +9,11 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use std::path::PathBuf;
+
 use internet2::addr::ServiceAddr;
 use store_rpc::STORED_RPC_ENDPOINT;
+use storm::ChunkId;
 
 /// Command-line tool for working with store daemon
 #[derive(Parser, Clone, PartialEq, Eq, Debug)]
@@ -45,6 +48,31 @@ pub struct Opts {
 /// Command-line commands:
 #[derive(Subcommand, Clone, PartialEq, Eq, Debug, Display)]
 pub enum Command {
-    #[display("none")]
-    None,
+    /// Stores file into database
+    #[display("store '{db}' '{file:?}'")]
+    Store {
+        /// Database to store file in
+        db: String,
+
+        /// File to put into database. If no file is given, data are read from
+        /// STDIN.
+        file: Option<PathBuf>,
+    },
+
+    /// Retrieves file from the database and outputs it into the provided
+    /// file name, or onto stdout if no output file is specified.
+    ///
+    /// The output file, if exists, gets truncated/overwritten.
+    #[display("retrieve '{db}' {chunk_id}")]
+    Retrieve {
+        /// Database to request file.
+        db: String,
+
+        /// Information (file chunk) identifier returned before with the `store`
+        /// command.
+        chunk_id: ChunkId,
+
+        /// File for output. The data are printed to stdout if no file is given.
+        output: Option<PathBuf>,
+    },
 }

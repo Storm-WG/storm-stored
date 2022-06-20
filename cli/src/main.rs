@@ -22,6 +22,7 @@ extern crate clap;
 
 mod command;
 mod opts;
+mod util;
 
 use clap::Parser;
 use colored::Colorize;
