@@ -13,20 +13,7 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueHint};
 use internet2::addr::ServiceAddr;
-use store_rpc::STORED_RPC_ENDPOINT;
-
-#[cfg(any(target_os = "linux"))]
-pub const STORED_DATA_DIR: &str = "~/.storm";
-#[cfg(any(target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-pub const STORED_DATA_DIR: &str = "~/.storm";
-#[cfg(target_os = "macos")]
-pub const STORED_DATA_DIR: &str = "~/Library/Application Support/Storm Node";
-#[cfg(target_os = "windows")]
-pub const STORED_DATA_DIR: &str = "~\\AppData\\Local\\Storm Node";
-#[cfg(target_os = "ios")]
-pub const STORED_DATA_DIR: &str = "~/Documents";
-#[cfg(target_os = "android")]
-pub const STORED_DATA_DIR: &str = ".";
+use store_rpc::{STORED_DATA_DIR, STORED_RPC_ENDPOINT};
 
 pub const STORED_CONFIG: &str = "{data_dir}/stored.toml";
 pub const STORED_STORAGE_FILE: &str = "data";

@@ -413,6 +413,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "const_format"
+version = "0.2.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2906f2480cdc015e998deac388331a0f1c1cd88744948c749513020c83c370bc"
+dependencies = [
+ "const_format_proc_macros",
+]
+
+[[package]]
+name = "const_format_proc_macros"
+version = "0.2.22"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef196d5d972878a48da7decb7686eded338b4858fbabeed513d63a7c98b2b82d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-xid",
+]
+
+[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1031,9 +1051,9 @@ dependencies = [
 
 [[package]]
 name = "microservices"
-version = "0.8.0-rc.2"
+version = "0.8.0-rc.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da3dae2a4fdc8ff79de8aaa1d455681dc04dabd60be67f8a1db612c8230cd0b2"
+checksum = "d2ff0dfe414fdf502c29a32d9b9009526251e0aacc172aec6b88d995e263668f"
 dependencies = [
  "amplify",
  "clap",
@@ -1043,6 +1063,7 @@ dependencies = [
  "lightning_encoding",
  "log",
  "nix",
+ "once_cell",
  "secp256k1",
  "serde 1.0.137",
  "serde_with",
@@ -1111,6 +1132,12 @@ dependencies = [
  "hermit-abi",
  "libc",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7709cef83f0c1f58f666e746a08b21e0085f7440fa6a29cc194d68aac97a4225"
 
 [[package]]
 name = "opaque-debug"
@@ -1793,6 +1820,7 @@ dependencies = [
  "amplify",
  "colored",
  "commit_verify",
+ "const_format",
  "internet2",
  "log",
  "microservices",
@@ -1802,7 +1830,6 @@ dependencies = [
  "serde_yaml",
  "storm-core",
  "strict_encoding",
- "zmq2",
 ]
 
 [[package]]
