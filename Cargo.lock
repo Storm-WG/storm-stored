@@ -1775,11 +1775,13 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "store-cli"
-version = "0.8.0-alpha.1"
+version = "0.8.0-beta.1"
 dependencies = [
  "amplify",
  "clap",
+ "clap_complete",
  "colored",
+ "configure_me_codegen",
  "internet2",
  "log",
  "microservices",
@@ -1790,7 +1792,7 @@ dependencies = [
 
 [[package]]
 name = "store_daemon"
-version = "0.8.0-alpha.1"
+version = "0.8.0-beta.1"
 dependencies = [
  "amplify",
  "chrono",
@@ -1817,7 +1819,7 @@ dependencies = [
 
 [[package]]
 name = "store_rpc"
-version = "0.8.0-alpha.1"
+version = "0.8.0-beta.1"
 dependencies = [
  "amplify",
  "colored",

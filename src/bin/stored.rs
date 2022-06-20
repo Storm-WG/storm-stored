@@ -16,14 +16,11 @@
 #[macro_use]
 extern crate log;
 
-mod opts;
-
 use clap::Parser;
 use microservices::error::BootstrapError;
 use microservices::shell::LogLevel;
+use stored::opts::Opts;
 use stored::{Config, LaunchError};
-
-use crate::opts::Opts;
 
 fn main() -> Result<(), BootstrapError<LaunchError>> {
     println!("stored: storage microservice");

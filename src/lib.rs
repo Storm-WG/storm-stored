@@ -16,10 +16,11 @@ extern crate log;
 
 mod config;
 mod error;
-mod stored;
+pub mod service;
+#[cfg(feature = "server")]
+pub mod opts;
 
 pub use config::Config;
 pub use error::{DaemonError, LaunchError};
-pub use stored::service;
 
 pub(crate) const STORED_STORAGE_FILE: &str = "sled.db";
