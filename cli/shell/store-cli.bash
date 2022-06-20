@@ -103,7 +103,7 @@ _store-cli() {
             return 0
             ;;
         store__cli__retrieve)
-            opts="-h -c -v --help --connect --verbose <TABLE> <CHUNK_ID> <OUTPUT>"
+            opts="-h -c -v --help --connect --verbose <TABLE> <KEY> <OUTPUT>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -125,7 +125,7 @@ _store-cli() {
             return 0
             ;;
         store__cli__store)
-            opts="-h -c -v --help --connect --verbose <TABLE> <FILE>"
+            opts="-h -c -v --help --connect --verbose <TABLE> <KEY> <FILE>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0

@@ -38,17 +38,17 @@ impl Exec for Opts {
                 eprint!("Database table `{}` contains ", table);
                 eprintln!("{} object(s)", client.count(table)?);
             }
-            Command::Store { table: db, file } => {
+            Command::Store {
+                table: db,
+                key,
+                file,
+            } => {
                 let data = read_file_or_stdin(file).expect("unable to read the file");
-                let chunk_id = client.store(db, &data)?;
+                let chunk_id = client.store(db, key, &data)?;
                 eprint!("Stored chunk id ");
                 println!("{}", chunk_id);
             }
-            Command::Retrieve {
-                table,
-                chunk_id,
-                output,
-            } => match client.retrieve(table, chunk_id)? {
+            Command::Retrieve { table, key, output } => match client.retrieve(table, key)? {
                 Some(chunk) => {
                     eprintln!("success");
                     let output_filename =

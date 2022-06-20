@@ -73,6 +73,7 @@ _arguments "${_arguments_options[@]}" \
 '*-v[Set verbosity level]' \
 '*--verbose[Set verbosity level]' \
 ':table -- Database table to store file in:' \
+':key -- Primary key for storage:' \
 '::file -- File to put into database. If no file is given, data are read from STDIN:' \
 && ret=0
 ;;
@@ -85,7 +86,7 @@ _arguments "${_arguments_options[@]}" \
 '*-v[Set verbosity level]' \
 '*--verbose[Set verbosity level]' \
 ':table -- Database table to request file:' \
-':chunk-id -- Information (file chunk) identifier returned before with the `store` command:' \
+':key -- Object identifier used for store:' \
 '::output -- File for output. The data are printed to stdout if no file is given:' \
 && ret=0
 ;;

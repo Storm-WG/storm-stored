@@ -12,7 +12,7 @@
 use std::path::PathBuf;
 
 use internet2::addr::ServiceAddr;
-use store_rpc::STORED_RPC_ENDPOINT;
+use store_rpc::{PrimaryKey, STORED_RPC_ENDPOINT};
 use storm::ChunkId;
 
 /// Command-line tool for working with store daemon
@@ -69,6 +69,9 @@ pub enum Command {
         /// Database table to store file in
         table: String,
 
+        /// Primary key for storage
+        key: PrimaryKey,
+
         /// File to put into database. If no file is given, data are read from
         /// STDIN.
         file: Option<PathBuf>,
@@ -78,14 +81,13 @@ pub enum Command {
     /// file name, or onto stdout if no output file is specified.
     ///
     /// The output file, if exists, gets truncated/overwritten.
-    #[display("retrieve '{table}' {chunk_id}")]
+    #[display("retrieve '{table}' {key}")]
     Retrieve {
         /// Database table to request file.
         table: String,
 
-        /// Information (file chunk) identifier returned before with the `store`
-        /// command.
-        chunk_id: ChunkId,
+        /// Object identifier used for store.
+        key: PrimaryKey,
 
         /// File for output. The data are printed to stdout if no file is given.
         output: Option<PathBuf>,

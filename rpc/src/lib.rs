@@ -31,10 +31,11 @@ mod error;
 mod reply;
 mod request;
 
+use amplify::Slice32;
 pub use client::Client;
 pub use error::FailureCode;
 pub use reply::Reply;
-pub use request::{ChunkInfo, Request, StoreReq};
+pub use request::{Request, RetrieveReq, StoreReq};
 
 #[cfg(any(target_os = "linux"))]
 pub const STORED_DATA_DIR: &str = "~/.storm";
@@ -50,3 +51,5 @@ pub const STORED_DATA_DIR: &str = "~/Documents";
 pub const STORED_DATA_DIR: &str = ".";
 
 pub const STORED_RPC_ENDPOINT: &str = const_format::concatcp!(STORED_DATA_DIR, "/store");
+
+pub type PrimaryKey = Slice32;

@@ -11,6 +11,8 @@
 
 use storm::{Chunk, ChunkId};
 
+use crate::PrimaryKey;
+
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Display)]
 #[derive(Api)]
 #[api(encoding = "strict")]
@@ -34,21 +36,22 @@ pub enum Request {
 
     #[api(type = 0x12)]
     #[display("retrieve({0})")]
-    Retrieve(ChunkInfo),
+    Retrieve(RetrieveReq),
 }
 
 #[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
 #[derive(NetworkEncode, NetworkDecode)]
-#[display("{table}, ...")]
+#[display("{table}, {key}, ...")]
 pub struct StoreReq {
     pub table: String,
+    pub key: PrimaryKey,
     pub chunk: Chunk,
 }
 
 #[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
 #[derive(NetworkEncode, NetworkDecode)]
-#[display("{table}, {chunk_id}")]
-pub struct ChunkInfo {
+#[display("{table}, {key}")]
+pub struct RetrieveReq {
     pub table: String,
-    pub chunk_id: ChunkId,
+    pub key: PrimaryKey,
 }

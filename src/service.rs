@@ -20,7 +20,7 @@ use microservices::error::BootstrapError;
 use microservices::node::TryService;
 use microservices::rpc::ClientError;
 use microservices::ZMQ_CONTEXT;
-use store_rpc::{ChunkInfo, Reply, Request, StoreReq};
+use store_rpc::{PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
 use storm::{Chunk, ChunkId};
 
 use crate::{Config, DaemonError, LaunchError, STORED_STORAGE_FILE};
@@ -127,8 +127,8 @@ impl Runtime {
             Request::Use(table) => self.use_table(table),
             Request::Tables => self.list_tables(),
             Request::Count(table) => self.count(table),
-            Request::Store(StoreReq { table, chunk }) => self.store(table, chunk),
-            Request::Retrieve(ChunkInfo { table, chunk_id }) => self.retrieve(table, chunk_id),
+            Request::Store(StoreReq { table, key, chunk }) => self.store(table, key, chunk),
+            Request::Retrieve(RetrieveReq { table, key }) => self.retrieve(table, key),
         }
         .map_err(Reply::from)
     }
@@ -150,18 +150,18 @@ impl Runtime {
         Ok(Reply::Count(count as u64))
     }
 
-    fn store(&self, table: String, chunk: Chunk) -> Result<Reply, DaemonError> {
+    fn store(&self, table: String, key: PrimaryKey, chunk: Chunk) -> Result<Reply, DaemonError> {
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         let chunk_id = chunk.consensus_commit();
-        tree.insert(chunk_id, chunk.as_ref())?;
+        tree.insert(key, chunk.as_ref())?;
         tree.flush()?;
         Ok(Reply::ChunkId(chunk_id))
     }
 
-    fn retrieve(&self, table: String, chunk_id: ChunkId) -> Result<Reply, DaemonError> {
+    fn retrieve(&self, table: String, key: PrimaryKey) -> Result<Reply, DaemonError> {
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
-        Ok(match tree.get(chunk_id)? {
-            None => Reply::ChunkAbsent(chunk_id),
+        Ok(match tree.get(key)? {
+            None => Reply::KeyAbsent(key),
             Some(data) => Reply::Chunk(data.as_ref().try_into()?),
         })
     }

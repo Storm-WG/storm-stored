@@ -16,7 +16,7 @@ use microservices::rpc;
 use microservices::rpc::ServerError;
 use storm::{Chunk, ChunkId};
 
-use crate::FailureCode;
+use crate::{FailureCode, PrimaryKey};
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Display, From)]
 #[derive(Api)]
@@ -51,8 +51,8 @@ pub enum Reply {
     Chunk(Chunk),
 
     #[api(type = 0x0013)]
-    #[display("chunk_absent({0})")]
-    ChunkAbsent(ChunkId),
+    #[display("key_absent({0})")]
+    KeyAbsent(PrimaryKey),
 }
 
 impl rpc::Reply for Reply {}

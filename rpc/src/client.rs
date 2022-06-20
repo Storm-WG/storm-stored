@@ -20,7 +20,7 @@ use microservices::rpc::ServerError;
 use microservices::ZMQ_CONTEXT;
 use storm::{Chunk, ChunkId};
 
-use crate::{ChunkInfo, FailureCode, Reply, Request, StoreReq};
+use crate::{FailureCode, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
 
 pub struct Client {
     // TODO: Replace with RpcSession once its implementation is completed
@@ -64,10 +64,11 @@ impl Client {
     pub fn store(
         &mut self,
         table: String,
+        key: PrimaryKey,
         data: impl AsRef<[u8]>,
     ) -> Result<ChunkId, ServerError<FailureCode>> {
         let chunk = Chunk::try_from(data.as_ref())?;
-        let reply = self.request(Request::Store(StoreReq { table, chunk }))?;
+        let reply = self.request(Request::Store(StoreReq { table, key, chunk }))?;
         match reply {
             Reply::ChunkId(chunk_id) => Ok(chunk_id),
             Reply::Failure(failure) => Err(failure.into()),
@@ -78,12 +79,12 @@ impl Client {
     pub fn retrieve(
         &mut self,
         table: String,
-        chunk_id: ChunkId,
+        key: PrimaryKey,
     ) -> Result<Option<Chunk>, ServerError<FailureCode>> {
-        let reply = self.request(Request::Retrieve(ChunkInfo { table, chunk_id }))?;
+        let reply = self.request(Request::Retrieve(RetrieveReq { table, key }))?;
         match reply {
             Reply::Chunk(chunk) => Ok(Some(chunk)),
-            Reply::ChunkAbsent(_) => Ok(None),
+            Reply::KeyAbsent(_) => Ok(None),
             _ => Err(ServerError::UnexpectedServerResponse),
         }
     }
