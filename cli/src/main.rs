@@ -25,31 +25,26 @@ mod opts;
 
 use clap::Parser;
 use colored::Colorize;
+use internet2::addr::ServiceAddr;
 use microservices::shell::{Exec, LogLevel};
-use store_rpc::client::{Client, Config};
+use store_rpc::client::Client;
 
 pub use crate::opts::{Command, Opts};
-
-impl From<Opts> for Config {
-    fn from(opts: Opts) -> Self {
-        Config {
-            rpc_endpoint: opts.rpc_endpoint,
-            verbose: opts.verbose,
-        }
-    }
-}
 
 fn main() {
     println!("store-cli: command-line tool for working with Store daemon");
 
-    let opts = Opts::parse();
+    let mut opts = Opts::parse();
     LogLevel::from_verbosity_flag_count(opts.verbose).apply();
     trace!("Command-line arguments: {:#?}", &opts);
 
-    let config: Config = opts.clone().into();
-    trace!("Tool configuration: {:#?}", &config);
+    let connect = &mut opts.connect;
+    if let ServiceAddr::Ipc(ref mut path) = connect {
+        *path = shellexpand::tilde(path).to_string();
+    }
+    debug!("RPC socket {}", connect);
 
-    let mut client = Client::with(config).expect("Error initializing client");
+    let mut client = Client::with(connect).expect("Error initializing client");
 
     trace!("Executing command: {}", opts.command);
     opts.exec(&mut client).unwrap_or_else(|err| {

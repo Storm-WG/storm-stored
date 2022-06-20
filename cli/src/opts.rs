@@ -29,7 +29,7 @@ pub struct Opts {
         default_value = STORED_RPC_ENDPOINT,
         env = "STORED_RPC_ENDPOINT"
     )]
-    pub rpc_endpoint: ServiceAddr,
+    pub connect: ServiceAddr,
 
     /// Set verbosity level.
     ///

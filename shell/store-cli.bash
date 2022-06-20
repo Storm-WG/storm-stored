@@ -25,17 +25,17 @@ _store-cli() {
 
     case "${cmd}" in
         store__cli)
-            opts="-h -V -r -v --help --version --rpc-endpoint --verbose none help"
+            opts="-h -V -c -v --help --version --connect --verbose none help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --rpc-endpoint)
+                --connect)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -r)
+                -c)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -47,17 +47,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__help)
-            opts="-r -v --rpc-endpoint --verbose <SUBCOMMAND>..."
+            opts="-c -v --connect --verbose <SUBCOMMAND>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --rpc-endpoint)
+                --connect)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -r)
+                -c)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -69,17 +69,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__none)
-            opts="-h -r -v --help --rpc-endpoint --verbose"
+            opts="-h -c -v --help --connect --verbose"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --rpc-endpoint)
+                --connect)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -r)
+                -c)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;

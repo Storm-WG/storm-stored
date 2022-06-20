@@ -1782,6 +1782,7 @@ dependencies = [
  "internet2",
  "log",
  "microservices",
+ "shellexpand",
  "store_rpc",
 ]
 
