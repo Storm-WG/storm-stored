@@ -14,7 +14,7 @@ use microservices::shell::Exec;
 use store_rpc::{ChunkInfo, Client, FailureCode, Reply, Request, StoreReq};
 use storm::Chunk;
 
-use crate::util::read_file_or_stdin;
+use crate::util::{read_file_or_stdin, write_file_or_stdout};
 use crate::{Command, Opts};
 
 impl Exec for Opts {
@@ -27,24 +27,38 @@ impl Exec for Opts {
             Command::Store { db, file } => {
                 let data = read_file_or_stdin(file).expect("unable to read the file");
                 let chunk = Chunk::try_from(data.as_slice()).expect("file is too large");
-                runtime.request(Request::Store(StoreReq { db, chunk }))?
+                let reply = runtime.request(Request::Store(StoreReq { db, chunk }))?;
+                Some(reply)
             }
-            Command::Retrieve { .. } => {
-                todo!()
+            Command::Retrieve {
+                db,
+                chunk_id,
+                output,
+            } => {
+                let reply = runtime.request(Request::Retrieve(ChunkInfo { db, chunk_id }))?;
+                match reply {
+                    Reply::Chunk(chunk) => {
+                        eprintln!("success");
+                        let output_filename = output
+                            .as_deref()
+                            .map(|f| f.display().to_string())
+                            .unwrap_or(s!("STDOUT"));
+                        eprint!("Writing to {} ... ", output_filename);
+                        write_file_or_stdout(chunk, output).expect("unable to write to the file");
+                        eprintln!("success");
+                    }
+                    Reply::ChunkAbsent(id) => {
+                        eprintln!("unknown chunk");
+                    }
+                    _ => unreachable!("unexpected server response"),
+                }
+                None
             }
         };
         match reply {
-            Reply::Success => eprintln!("success"),
-            Reply::Failure(failure) => eprintln!("failure: {}", failure),
-            Reply::ChunkId(chunk_id) => {
-                eprintln!("success");
-                println!("{}", chunk_id)
-            }
-            Reply::Chunk(chunk) => {
-                eprintln!("success");
-                // eprintln!("Saving to ...");
-            }
-            Reply::ChunkAbsent(_) => {}
+            Some(Reply::Success) => eprintln!("success"),
+            Some(Reply::Failure(failure)) => eprintln!("failure: {}", failure),
+            None => {}
             _ => unreachable!("unknown server response"),
         }
         Ok(())
