@@ -23,6 +23,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --workspace
   features:
     runs-on: ubuntu-latest
     strategy:
@@ -43,22 +44,14 @@ jobs:
         with:
           command: check
           args: --no-default-features --features=${{ matrix.feature }}
-      - name: Defaults + ${{ matrix.feature }}
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-          args: --features=${{ matrix.feature }}
   platforms:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04, ubuntu-latest, macos-11.0, windows-latest ]
+        os: [ ubuntu-20.04, ubuntu-22.04, macos-11, macos-12, windows-2019, windows-2022 ]
     steps:
       - uses: actions/checkout@v2
-      - name: Install macos dependencies
-        if: startsWith(matrix.os, 'macos')
-        run: brew install pkg-config
       - name: Install rust stable
         uses: actions-rs/toolchain@v1
         with:
@@ -68,13 +61,13 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --all-features
+          args: --workspace --all-targets --all-features
   toolchains:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        toolchain: [ nightly, beta, stable, 1.56.0 ]
+        toolchain: [ nightly, beta, stable, 1.59.0 ]
     steps:
       - uses: actions/checkout@v2
       - name: Install rust ${{ matrix.toolchain }}
@@ -87,26 +80,3 @@ jobs:
         with:
           command: check
           args: --workspace --all-targets --all-features
-  dependency:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install latest stable
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - name: Create dependency
-        run: |
-          cargo new dep_test
-          cp test/depCargo.toml dep_test/Cargo.toml
-          cd dep_test
-      - name: Build dependency
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-          args: --verbose
-      - name: Clean up
-        run: |
-          cd ..
-          rm -rf dep_test
