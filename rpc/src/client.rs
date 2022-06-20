@@ -9,6 +9,8 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use std::collections::BTreeSet;
+
 use internet2::addr::ServiceAddr;
 use internet2::session::LocalSession;
 use internet2::{
@@ -41,6 +43,14 @@ impl Client {
 
     pub fn use_table(&mut self, table: String) -> Result<(), ServerError<FailureCode>> {
         self.request(Request::Use(table))?.success_or_failure()
+    }
+
+    pub fn list_tables(&mut self) -> Result<BTreeSet<String>, ServerError<FailureCode>> {
+        match self.request(Request::Tables)? {
+            Reply::Tables(tables) => Ok(tables),
+            Reply::Failure(failure) => Err(failure.into()),
+            _ => Err(ServerError::UnexpectedServerResponse),
+        }
     }
 
     pub fn store(

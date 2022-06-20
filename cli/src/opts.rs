@@ -48,6 +48,15 @@ pub struct Opts {
 /// Command-line commands:
 #[derive(Subcommand, Clone, PartialEq, Eq, Debug, Display)]
 pub enum Command {
+    /// Use a database table
+    Use {
+        /// Database table to connect
+        table: String,
+    },
+
+    /// List used database tables
+    Tables,
+
     /// Stores file into database
     #[display("store '{table}' '{file:?}'")]
     Store {

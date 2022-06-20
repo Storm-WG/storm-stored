@@ -32,7 +32,28 @@ _store-cli() {
         (( CURRENT += 1 ))
         curcontext="${curcontext%:*:*}:store-cli-command-$line[1]:"
         case $line[1] in
-            (store)
+            (use)
+_arguments "${_arguments_options[@]}" \
+'-c+[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'--connect=[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'-h[Print help information]' \
+'--help[Print help information]' \
+'*-v[Set verbosity level]' \
+'*--verbose[Set verbosity level]' \
+':table -- Database table to connect:' \
+&& ret=0
+;;
+(tables)
+_arguments "${_arguments_options[@]}" \
+'-c+[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'--connect=[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'-h[Print help information]' \
+'--help[Print help information]' \
+'*-v[Set verbosity level]' \
+'*--verbose[Set verbosity level]' \
+&& ret=0
+;;
+(store)
 _arguments "${_arguments_options[@]}" \
 '-c+[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
 '--connect=[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
@@ -74,6 +95,8 @@ esac
 (( $+functions[_store-cli_commands] )) ||
 _store-cli_commands() {
     local commands; commands=(
+'use:Use a database table' \
+'tables:List used database tables' \
 'store:Stores file into database' \
 'retrieve:Retrieves file from the database and outputs it into the provided file name, or onto stdout if no output file is specified' \
 'help:Print this message or the help of the given subcommand(s)' \
@@ -94,6 +117,16 @@ _store-cli__retrieve_commands() {
 _store-cli__store_commands() {
     local commands; commands=()
     _describe -t commands 'store-cli store commands' commands "$@"
+}
+(( $+functions[_store-cli__tables_commands] )) ||
+_store-cli__tables_commands() {
+    local commands; commands=()
+    _describe -t commands 'store-cli tables commands' commands "$@"
+}
+(( $+functions[_store-cli__use_commands] )) ||
+_store-cli__use_commands() {
+    local commands; commands=()
+    _describe -t commands 'store-cli use commands' commands "$@"
 }
 
 _store-cli "$@"

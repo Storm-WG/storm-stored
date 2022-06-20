@@ -20,6 +20,10 @@ pub enum Request {
     #[display("use({0})")]
     Use(String),
 
+    #[api(type = 0xa1)]
+    #[display("tables({0})")]
+    Tables,
+
     #[api(type = 0x10)]
     #[display("store({0})")]
     Store(StoreReq),

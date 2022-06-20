@@ -20,12 +20,23 @@ impl Exec for Opts {
     type Client = Client;
     type Error = ServerError<FailureCode>;
 
-    fn exec(self, runtime: &mut Self::Client) -> Result<(), Self::Error> {
-        eprint!("Performing {:?} ... ", self.command);
+    fn exec(self, client: &mut Self::Client) -> Result<(), Self::Error> {
+        debug!("Performing {:?} ... ", self.command);
         match self.command {
+            Command::Use { table } => {
+                eprintln!("Using table {}", table);
+                client.use_table(table)?;
+            }
+            Command::Tables => {
+                eprintln!("Listing tables:");
+                let tables = client.list_tables()?;
+                for table in tables {
+                    println!("{}", table);
+                }
+            }
             Command::Store { table: db, file } => {
                 let data = read_file_or_stdin(file).expect("unable to read the file");
-                let chunk_id = runtime.store(db, &data)?;
+                let chunk_id = client.store(db, &data)?;
                 eprint!("Stored chunk id ");
                 println!("{}", chunk_id);
             }
@@ -33,7 +44,7 @@ impl Exec for Opts {
                 table,
                 chunk_id,
                 output,
-            } => match runtime.retrieve(table, chunk_id)? {
+            } => match client.retrieve(table, chunk_id)? {
                 Some(chunk) => {
                     eprintln!("success");
                     let output_filename =
@@ -47,6 +58,7 @@ impl Exec for Opts {
                 }
             },
         }
+        eprintln!();
         Ok(())
     }
 }

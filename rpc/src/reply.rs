@@ -9,6 +9,8 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use std::collections::BTreeSet;
+
 use internet2::presentation;
 use microservices::rpc;
 use microservices::rpc::ServerError;
@@ -31,6 +33,10 @@ pub enum Reply {
     #[display("failure({0:#})")]
     #[from]
     Failure(rpc::Failure<FailureCode>),
+
+    #[api(type = 0x00a1)]
+    #[display("tables(...)")]
+    Tables(BTreeSet<String>),
 
     #[api(type = 0x0011)]
     #[display("chunk_id({0})")]

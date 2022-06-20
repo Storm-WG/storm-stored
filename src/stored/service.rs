@@ -125,6 +125,7 @@ impl Runtime {
         debug!("Received ZMQ RPC request #{}: {}", request.get_type(), request);
         match request {
             Request::Use(table) => self.use_table(table),
+            Request::Tables => self.list_tables(),
             Request::Store(StoreReq { table, chunk }) => self.store(table, chunk),
             Request::Retrieve(ChunkInfo { table, chunk_id }) => self.retrieve(table, chunk_id),
         }
@@ -135,6 +136,11 @@ impl Runtime {
         let tree = self.db.open_tree(&table)?;
         self.trees.insert(table, tree);
         Ok(Reply::Success)
+    }
+
+    fn list_tables(&self) -> Result<Reply, DaemonError> {
+        let tables = self.trees.keys().cloned().collect();
+        Ok(Reply::Tables(tables))
     }
 
     fn store(&self, table: String, chunk: Chunk) -> Result<Reply, DaemonError> {
