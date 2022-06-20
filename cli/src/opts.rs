@@ -57,6 +57,12 @@ pub enum Command {
     /// List used database tables
     Tables,
 
+    /// Count number of stored items
+    Count {
+        /// Database table to store file in
+        table: String,
+    },
+
     /// Stores file into database
     #[display("store '{table}' '{file:?}'")]
     Store {

@@ -34,6 +34,10 @@ impl Exec for Opts {
                     println!("{}", table);
                 }
             }
+            Command::Count { table } => {
+                eprint!("Database table `{}` contains ", table);
+                eprintln!("{} object(s)", client.count(table)?);
+            }
             Command::Store { table: db, file } => {
                 let data = read_file_or_stdin(file).expect("unable to read the file");
                 let chunk_id = client.store(db, &data)?;

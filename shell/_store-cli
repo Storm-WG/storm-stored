@@ -53,6 +53,17 @@ _arguments "${_arguments_options[@]}" \
 '*--verbose[Set verbosity level]' \
 && ret=0
 ;;
+(count)
+_arguments "${_arguments_options[@]}" \
+'-c+[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'--connect=[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
+'-h[Print help information]' \
+'--help[Print help information]' \
+'*-v[Set verbosity level]' \
+'*--verbose[Set verbosity level]' \
+':table -- Database table to store file in:' \
+&& ret=0
+;;
 (store)
 _arguments "${_arguments_options[@]}" \
 '-c+[ZMQ socket for connecting daemon RPC interface]:CONNECT: ' \
@@ -97,11 +108,17 @@ _store-cli_commands() {
     local commands; commands=(
 'use:Use a database table' \
 'tables:List used database tables' \
+'count:Count number of stored items' \
 'store:Stores file into database' \
 'retrieve:Retrieves file from the database and outputs it into the provided file name, or onto stdout if no output file is specified' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'store-cli commands' commands "$@"
+}
+(( $+functions[_store-cli__count_commands] )) ||
+_store-cli__count_commands() {
+    local commands; commands=()
+    _describe -t commands 'store-cli count commands' commands "$@"
 }
 (( $+functions[_store-cli__help_commands] )) ||
 _store-cli__help_commands() {

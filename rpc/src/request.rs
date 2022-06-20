@@ -24,6 +24,10 @@ pub enum Request {
     #[display("tables({0})")]
     Tables,
 
+    #[api(type = 0xa3)]
+    #[display("count({0})")]
+    Count(String),
+
     #[api(type = 0x10)]
     #[display("store({0})")]
     Store(StoreReq),

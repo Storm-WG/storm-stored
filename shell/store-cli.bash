@@ -12,6 +12,9 @@ _store-cli() {
             "$1")
                 cmd="store__cli"
                 ;;
+            count)
+                cmd+="__count"
+                ;;
             help)
                 cmd+="__help"
                 ;;
@@ -34,8 +37,30 @@ _store-cli() {
 
     case "${cmd}" in
         store__cli)
-            opts="-h -V -c -v --help --version --connect --verbose use tables store retrieve help"
+            opts="-h -V -c -v --help --version --connect --verbose use tables count store retrieve help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --connect)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        store__cli__count)
+            opts="-h -c -v --help --connect --verbose <TABLE>"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi

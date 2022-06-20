@@ -126,6 +126,7 @@ impl Runtime {
         match request {
             Request::Use(table) => self.use_table(table),
             Request::Tables => self.list_tables(),
+            Request::Count(table) => self.count(table),
             Request::Store(StoreReq { table, chunk }) => self.store(table, chunk),
             Request::Retrieve(ChunkInfo { table, chunk_id }) => self.retrieve(table, chunk_id),
         }
@@ -143,10 +144,17 @@ impl Runtime {
         Ok(Reply::Tables(tables))
     }
 
+    fn count(&self, table: String) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
+        let count = tree.len();
+        Ok(Reply::Count(count as u64))
+    }
+
     fn store(&self, table: String, chunk: Chunk) -> Result<Reply, DaemonError> {
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         let chunk_id = chunk.consensus_commit();
         tree.insert(chunk_id, chunk.as_ref())?;
+        tree.flush()?;
         Ok(Reply::ChunkId(chunk_id))
     }
 

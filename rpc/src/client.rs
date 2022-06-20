@@ -53,6 +53,14 @@ impl Client {
         }
     }
 
+    pub fn count(&mut self, table: String) -> Result<u64, ServerError<FailureCode>> {
+        match self.request(Request::Count(table))? {
+            Reply::Count(count) => Ok(count),
+            Reply::Failure(failure) => Err(failure.into()),
+            _ => Err(ServerError::UnexpectedServerResponse),
+        }
+    }
+
     pub fn store(
         &mut self,
         table: String,

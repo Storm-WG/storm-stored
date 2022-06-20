@@ -38,6 +38,10 @@ pub enum Reply {
     #[display("tables(...)")]
     Tables(BTreeSet<String>),
 
+    #[api(type = 0x00a3)]
+    #[display("count(...)")]
+    Count(u64),
+
     #[api(type = 0x0011)]
     #[display("chunk_id({0})")]
     ChunkId(ChunkId),
