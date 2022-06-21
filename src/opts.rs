@@ -65,8 +65,8 @@ pub struct Opts {
     /// Socket can be either TCP address in form of `<ipv4 | ipv6>:<port>` – or a path
     /// to an IPC file.
     #[clap(
-        short = 'x',
-        long,
+        short = 'X',
+        long = "rpc",
         env = "STORED_RPC_ENDPOINT",
         value_hint = ValueHint::FilePath,
         default_value = STORED_RPC_ENDPOINT

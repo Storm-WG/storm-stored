@@ -413,26 +413,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "const_format"
-version = "0.2.25"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2906f2480cdc015e998deac388331a0f1c1cd88744948c749513020c83c370bc"
-dependencies = [
- "const_format_proc_macros",
-]
-
-[[package]]
-name = "const_format_proc_macros"
-version = "0.2.22"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef196d5d972878a48da7decb7686eded338b4858fbabeed513d63a7c98b2b82d"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-xid",
-]
-
-[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1053,7 +1033,7 @@ dependencies = [
 [[package]]
 name = "microservices"
 version = "0.8.0-rc.8"
-source = "git+https://github.com/Internet2-WG/rust-microservices#6fd6b7aa2e2025fd454b40011e2ca5a2a5726fef"
+source = "git+https://github.com/Internet2-WG/rust-microservices#8fc95d98401b619bc770d7432a3b88a197ede895"
 dependencies = [
  "amplify",
  "clap",
@@ -1837,7 +1817,6 @@ dependencies = [
  "amplify",
  "colored",
  "commit_verify",
- "const_format",
  "internet2",
  "log",
  "microservices",

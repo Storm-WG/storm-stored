@@ -9,6 +9,7 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use microservices::cli;
 use microservices::rpc::ServerError;
 use microservices::shell::Exec;
 use store_rpc::{Client, FailureCode};
@@ -43,7 +44,7 @@ impl Exec for Opts {
                 key,
                 file,
             } => {
-                let data = read_file_or_stdin(file).expect("unable to read the file");
+                let data = cli::read_file_or_stdin(file).expect("unable to read the file");
                 let chunk_id = client.store(db, key, &data)?;
                 eprint!("Stored chunk id ");
                 println!("{}", chunk_id);
@@ -54,7 +55,7 @@ impl Exec for Opts {
                     let output_filename =
                         output.as_deref().map(|f| f.display().to_string()).unwrap_or(s!("STDOUT"));
                     eprint!("Writing to {} ... ", output_filename);
-                    write_file_or_stdout(chunk, output).expect("unable to write to the file");
+                    cli::write_file_or_stdout(chunk, output).expect("unable to write to the file");
                     eprintln!("success");
                 }
                 None => {
