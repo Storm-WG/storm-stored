@@ -37,17 +37,17 @@ _store-cli() {
 
     case "${cmd}" in
         store__cli)
-            opts="-h -V -c -v --help --version --connect --verbose use tables count store retrieve help"
+            opts="-h -V -R -v --help --version --rpc --verbose use tables count store retrieve help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --connect)
+                --rpc)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -c)
+                -R)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -59,17 +59,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__count)
-            opts="-h -c -v --help --connect --verbose <TABLE>"
+            opts="-h -R -v --help --rpc --verbose <TABLE>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --connect)
+                --rpc)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -c)
+                -R)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -81,17 +81,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__help)
-            opts="-c -v --connect --verbose <SUBCOMMAND>..."
+            opts="-R -v --rpc --verbose <SUBCOMMAND>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --connect)
+                --rpc)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -c)
+                -R)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -103,17 +103,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__retrieve)
-            opts="-h -c -v --help --connect --verbose <TABLE> <KEY> <OUTPUT>"
+            opts="-h -R -v --help --rpc --verbose <TABLE> <KEY> <OUTPUT>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --connect)
+                --rpc)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -c)
+                -R)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -125,17 +125,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__store)
-            opts="-h -c -v --help --connect --verbose <TABLE> <KEY> <FILE>"
+            opts="-h -R -v --help --rpc --verbose <TABLE> <KEY> <FILE>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --connect)
+                --rpc)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -c)
+                -R)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -147,17 +147,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__tables)
-            opts="-h -c -v --help --connect --verbose"
+            opts="-h -R -v --help --rpc --verbose"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --connect)
+                --rpc)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -c)
+                -R)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -169,17 +169,17 @@ _store-cli() {
             return 0
             ;;
         store__cli__use)
-            opts="-h -c -v --help --connect --verbose <TABLE>"
+            opts="-h -R -v --help --rpc --verbose <TABLE>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --connect)
+                --rpc)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -c)
+                -R)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;

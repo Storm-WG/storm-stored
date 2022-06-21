@@ -26,7 +26,7 @@ pub struct Opts {
     /// Defaults to `127.0.0.1:60960`.
     #[clap(
         short = 'R',
-        long = 'rpc',
+        long = "rpc",
         global = true,
         default_value = STORED_RPC_ENDPOINT,
         env = "STORED_RPC_ENDPOINT"

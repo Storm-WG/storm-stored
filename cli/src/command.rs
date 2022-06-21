@@ -14,7 +14,6 @@ use microservices::rpc::ServerError;
 use microservices::shell::Exec;
 use store_rpc::{Client, FailureCode};
 
-use crate::util::{read_file_or_stdin, write_file_or_stdout};
 use crate::{Command, Opts};
 
 impl Exec for Opts {

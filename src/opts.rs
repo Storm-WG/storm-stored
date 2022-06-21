@@ -67,6 +67,7 @@ pub struct Opts {
     #[clap(
         short = 'X',
         long = "rpc",
+        global = true,
         env = "STORED_RPC_ENDPOINT",
         value_hint = ValueHint::FilePath,
         default_value = STORED_RPC_ENDPOINT
