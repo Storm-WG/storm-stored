@@ -25,7 +25,7 @@ pub mod cli {
 }
 
 fn main() -> Result<(), configure_me_codegen::Error> {
-    let outdir = "./shell";
+    let outdir = "../shell";
 
     fs::create_dir_all(outdir).expect("failed to create shell dir");
     for app in [cli::Opts::command()].iter_mut() {
