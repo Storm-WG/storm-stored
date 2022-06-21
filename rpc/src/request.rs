@@ -9,7 +9,7 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use storm::{Chunk, ChunkId};
+use storm::Chunk;
 
 use crate::PrimaryKey;
 

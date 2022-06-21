@@ -21,7 +21,7 @@ use microservices::node::TryService;
 use microservices::rpc::ClientError;
 use microservices::ZMQ_CONTEXT;
 use store_rpc::{PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
-use storm::{Chunk, ChunkId};
+use storm::Chunk;
 
 use crate::{Config, DaemonError, LaunchError, STORED_STORAGE_FILE};
 
@@ -34,9 +34,6 @@ pub fn run(config: Config) -> Result<(), BootstrapError<LaunchError>> {
 }
 
 pub struct Runtime {
-    /// Original configuration object
-    pub(super) config: Config,
-
     /// Stored sessions
     pub(super) session_rpc: LocalSession,
 
@@ -67,7 +64,6 @@ impl Runtime {
         info!("Stored runtime started successfully");
 
         Ok(Self {
-            config,
             session_rpc,
             unmarshaller: Request::create_unmarshaller(),
             db,

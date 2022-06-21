@@ -330,9 +330,9 @@ dependencies = [
 
 [[package]]
 name = "clap_lex"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5538cd660450ebeb4234cfecf8f2284b844ffc4c50531e66d584ad5b91293613"
+checksum = "87eba3c8c7f42ef17f6c659fc7416d0f4758cd3e58861ee63c5fa4a4dde649e4"
 dependencies = [
  "os_str_bytes",
 ]
@@ -830,9 +830,9 @@ checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
 
 [[package]]
 name = "indexmap"
-version = "1.9.0"
+version = "1.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c6392766afd7964e2531940894cffe4bd8d7d17dbc3c1c4857040fd4b33bdb3"
+checksum = "10a35a97730320ffe8e2d410b5d3b69279b98d2c14bdb8b70ea89ecf7888d41e"
 dependencies = [
  "autocfg 1.1.0",
  "hashbrown",
@@ -1052,22 +1052,23 @@ dependencies = [
 
 [[package]]
 name = "microservices"
-version = "0.8.0-rc.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2ff0dfe414fdf502c29a32d9b9009526251e0aacc172aec6b88d995e263668f"
+version = "0.8.0-rc.8"
+source = "git+https://github.com/Internet2-WG/rust-microservices#6fd6b7aa2e2025fd454b40011e2ca5a2a5726fef"
 dependencies = [
  "amplify",
  "clap",
+ "colored",
  "config",
  "env_logger",
  "internet2",
  "lightning_encoding",
  "log",
- "nix",
+ "nix 0.24.1",
  "once_cell",
  "secp256k1",
  "serde 1.0.137",
  "serde_with",
+ "shellexpand",
  "strict_encoding",
  "toml",
  "zmq2",
@@ -1083,6 +1084,18 @@ dependencies = [
  "cc",
  "cfg-if",
  "libc",
+]
+
+[[package]]
+name = "nix"
+version = "0.24.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f17df307904acd05aa8e32e97bb20f2a0df1728bbc2d771ae8f9a90463441e9"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "libc",
+ "memoffset",
 ]
 
 [[package]]
@@ -1792,7 +1805,7 @@ dependencies = [
 
 [[package]]
 name = "store_daemon"
-version = "0.8.0-beta.1"
+version = "0.8.0-beta.2"
 dependencies = [
  "amplify",
  "chrono",
@@ -1808,7 +1821,7 @@ dependencies = [
  "internet2",
  "log",
  "microservices",
- "nix",
+ "nix 0.19.1",
  "rpassword",
  "shellexpand",
  "sled",
@@ -1850,9 +1863,9 @@ dependencies = [
 
 [[package]]
 name = "strict_encoding"
-version = "1.8.9"
+version = "1.8.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3379d91cf1a6dda3ad54629ae868f0dd65a8fb42fae697c94777253e795a12b3"
+checksum = "796bf3e8abb485e9194d03dfc534221e382f8cf058f417bbd66d5f4dd3b8a0cc"
 dependencies = [
  "amplify",
  "bitcoin",

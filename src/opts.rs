@@ -13,13 +13,27 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueHint};
 use internet2::addr::ServiceAddr;
-use store_rpc::STORED_DATA_DIR;
+use microservices::shell::shell_setup;
 
-pub const STORED_CONFIG: &str = "{data_dir}/stored.toml";
+#[cfg(any(target_os = "linux"))]
+pub const STORED_DATA_DIR: &str = "~/.storm";
+#[cfg(any(target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
+pub const STORED_DATA_DIR: &str = "~/.storm";
+#[cfg(target_os = "macos")]
+pub const STORED_DATA_DIR: &str = "~/Library/Application Support/Storm Node";
+#[cfg(target_os = "windows")]
+pub const STORED_DATA_DIR: &str = "~\\AppData\\Local\\Storm Node";
+#[cfg(target_os = "ios")]
+pub const STORED_DATA_DIR: &str = "~/Documents";
+#[cfg(target_os = "android")]
+pub const STORED_DATA_DIR: &str = ".";
+
 // We redefine constant here and do not use one from `store_rpc` since we need
 // to update the default path if the daemon was provided with a custom
 // `data_dir`.
 const STORED_RPC_ENDPOINT: &str = "{data_dir}/store";
+
+pub const STORED_CONFIG: &str = "{data_dir}/stored.toml";
 
 /// Command-line arguments
 #[derive(Parser)]
@@ -46,9 +60,10 @@ pub struct Opts {
     )]
     pub data_dir: PathBuf,
 
-    /// ZMQ socket name/address for store daemon RPC interface.
+    /// ZMQ socket name/address for Storm Node client-server RPC API.
     ///
-    /// Internal interface for control PRC protocol communications.
+    /// Socket can be either TCP address in form of `<ipv4 | ipv6>:<port>` – or a path
+    /// to an IPC file.
     #[clap(
         short = 'x',
         long,
@@ -61,4 +76,10 @@ pub struct Opts {
     /// Database table names to use.
     #[clap()]
     pub tables: Vec<String>,
+}
+
+impl Opts {
+    pub fn process(&mut self) {
+        shell_setup(self.verbose, [&mut self.rpc_endpoint], &mut self.data_dir, &[]);
+    }
 }

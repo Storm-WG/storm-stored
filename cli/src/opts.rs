@@ -13,7 +13,6 @@ use std::path::PathBuf;
 
 use internet2::addr::ServiceAddr;
 use store_rpc::{PrimaryKey, STORED_RPC_ENDPOINT};
-use storm::ChunkId;
 
 /// Command-line tool for working with store daemon
 #[derive(Parser, Clone, PartialEq, Eq, Debug)]
@@ -24,7 +23,7 @@ pub struct Opts {
     /// Socket can be either TCP address in form of `<ipv4 | ipv6>:<port>` – or a path
     /// to an IPC file.
     ///
-    /// Defaults to `127.0.0.1:62962`.
+    /// Defaults to `127.0.0.1:60960`.
     #[clap(
         short,
         long,
