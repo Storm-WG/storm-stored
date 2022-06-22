@@ -17,9 +17,9 @@ use microservices::shell::shell_setup;
 use store_rpc::STORED_RPC_ENDPOINT;
 
 #[cfg(any(target_os = "linux"))]
-pub const STORED_DATA_DIR: &str = "~/.storm";
+pub const STORED_DATA_DIR: &str = "~/.storm_node";
 #[cfg(any(target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-pub const STORED_DATA_DIR: &str = "~/.storm";
+pub const STORED_DATA_DIR: &str = "~/.storm_node";
 #[cfg(target_os = "macos")]
 pub const STORED_DATA_DIR: &str = "~/Library/Application Support/Storm Node";
 #[cfg(target_os = "windows")]
