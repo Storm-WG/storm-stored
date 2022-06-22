@@ -19,7 +19,7 @@ strict_encoding = "1.8.1"
 commit_verify = "0.7.0" # TODO: Update to 0.8
 internet2 = "0.8.0-beta.1"
 microservices = { version = "0.8.0-rc.4", default-features = false, features = ["client"], git = "https://github.com/Internet2-WG/rust-microservices" }
-storm-core = "0.1.0"
+storm-core = "0.2.0"
 rand = "0.8"
 serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
 serde_with = { version = "1.8", optional = true }

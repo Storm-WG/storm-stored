@@ -14,6 +14,7 @@ use std::path::PathBuf;
 use clap::{Parser, ValueHint};
 use internet2::addr::ServiceAddr;
 use microservices::shell::shell_setup;
+use store_rpc::STORED_RPC_ENDPOINT;
 
 #[cfg(any(target_os = "linux"))]
 pub const STORED_DATA_DIR: &str = "~/.storm";
@@ -27,11 +28,6 @@ pub const STORED_DATA_DIR: &str = "~\\AppData\\Local\\Storm Node";
 pub const STORED_DATA_DIR: &str = "~/Documents";
 #[cfg(target_os = "android")]
 pub const STORED_DATA_DIR: &str = ".";
-
-// We redefine constant here and do not use one from `store_rpc` since we need
-// to update the default path if the daemon was provided with a custom
-// `data_dir`.
-const STORED_RPC_ENDPOINT: &str = "{data_dir}/store";
 
 pub const STORED_CONFIG: &str = "{data_dir}/stored.toml";
 
