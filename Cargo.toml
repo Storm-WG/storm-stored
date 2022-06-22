@@ -30,6 +30,7 @@ strict_encoding = "1.8.8"
 commit_verify = "0.7.0" # TODO: Update to 0.8
 internet2 = { version = "0.8.0-beta.1", features = ["keygen", "zmq"] }
 microservices = { version = "0.8.0-rc.2", default-features = false, features = ["node"], git = "https://github.com/Internet2-WG/rust-microservices" }
+bitcoin_hashes = "0.10.0"
 storm-core = "0.2"
 store_rpc = { version = "0.8.0-beta.1", path = "rpc" }
 # DB

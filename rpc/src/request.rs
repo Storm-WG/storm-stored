@@ -37,6 +37,10 @@ pub enum Request {
     #[api(type = 0x12)]
     #[display("retrieve({0})")]
     Retrieve(RetrieveReq),
+
+    #[api(type = 0x14)]
+    #[display("list_ids({0})")]
+    ListIds(String),
 }
 
 #[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]

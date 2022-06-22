@@ -61,6 +61,14 @@ impl Exec for Opts {
                     eprintln!("unknown chunk");
                 }
             },
+            Command::Ids { table } => {
+                eprintln!("success");
+                eprintln!("Found ids:");
+                let ids = client.ids(table)?;
+                for id in ids {
+                    println!("{}", id);
+                }
+            }
         }
         eprintln!();
         Ok(())

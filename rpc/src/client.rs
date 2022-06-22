@@ -89,6 +89,15 @@ impl Client {
         }
     }
 
+    pub fn ids(&mut self, table: String) -> Result<BTreeSet<ChunkId>, ServerError<FailureCode>> {
+        let reply = self.request(Request::ListIds(table))?;
+        match reply {
+            Reply::Ids(ids) => Ok(ids),
+            Reply::KeyAbsent(_) => Ok(empty!()),
+            _ => Err(ServerError::UnexpectedServerResponse),
+        }
+    }
+
     fn request(&mut self, request: Request) -> Result<Reply, ServerError<FailureCode>> {
         trace!("Sending request to the server: {:?}", request);
         let data = request.serialize();

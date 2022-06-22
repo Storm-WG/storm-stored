@@ -18,6 +18,9 @@ _store-cli() {
             help)
                 cmd+="__help"
                 ;;
+            ids)
+                cmd+="__ids"
+                ;;
             retrieve)
                 cmd+="__retrieve"
                 ;;
@@ -37,7 +40,7 @@ _store-cli() {
 
     case "${cmd}" in
         store__cli)
-            opts="-h -V -R -v --help --version --rpc --verbose use tables count store retrieve help"
+            opts="-h -V -R -v --help --version --rpc --verbose use tables count ids store retrieve help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -82,6 +85,28 @@ _store-cli() {
             ;;
         store__cli__help)
             opts="-R -v --rpc --verbose <SUBCOMMAND>..."
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --rpc)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -R)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        store__cli__ids)
+            opts="-h -R -v --help --rpc --verbose <TABLE>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0

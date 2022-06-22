@@ -9,8 +9,9 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 
+use bitcoin_hashes::Hash;
 use commit_verify::commit_encode::ConsensusCommit;
 use internet2::session::LocalSession;
 use internet2::{
@@ -21,7 +22,7 @@ use microservices::node::TryService;
 use microservices::rpc::ClientError;
 use microservices::ZMQ_CONTEXT;
 use store_rpc::{PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
-use storm::Chunk;
+use storm::{Chunk, ChunkId};
 
 use crate::{Config, DaemonError, LaunchError, STORED_STORAGE_FILE};
 
@@ -125,6 +126,7 @@ impl Runtime {
             Request::Count(table) => self.count(table),
             Request::Store(StoreReq { table, key, chunk }) => self.store(table, key, chunk),
             Request::Retrieve(RetrieveReq { table, key }) => self.retrieve(table, key),
+            Request::ListIds(table) => self.list_ids(table),
         }
         .map_err(Reply::from)
     }
@@ -160,5 +162,18 @@ impl Runtime {
             None => Reply::KeyAbsent(key),
             Some(data) => Reply::Chunk(data.as_ref().try_into()?),
         })
+    }
+
+    fn list_ids(&self, table: String) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
+        let keys = tree
+            .range::<&[u8], _>(..)
+            .map(|res| match res {
+                Ok((ivec, _)) => Ok(ChunkId::from_slice(&*ivec)
+                    .map_err(|_| sled::Error::ReportableBug(s!("non-standard id")))?),
+                Err(e) => Err(e),
+            })
+            .collect::<Result<BTreeSet<_>, sled::Error>>()?;
+        Ok(Reply::Ids(keys))
     }
 }

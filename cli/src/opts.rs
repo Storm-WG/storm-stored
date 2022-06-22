@@ -62,6 +62,12 @@ pub enum Command {
         table: String,
     },
 
+    /// List all chunk ids stored in a table
+    Ids {
+        /// Database table to store file in
+        table: String,
+    },
+
     /// Stores file into database
     #[display("store '{table}' '{file:?}'")]
     Store {

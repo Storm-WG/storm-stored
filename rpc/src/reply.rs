@@ -51,6 +51,10 @@ pub enum Reply {
     Chunk(Chunk),
 
     #[api(type = 0x0013)]
+    #[display("ids(...)")]
+    Ids(BTreeSet<ChunkId>),
+
+    #[api(type = 0x0012)]
     #[display("key_absent({0})")]
     KeyAbsent(PrimaryKey),
 }
