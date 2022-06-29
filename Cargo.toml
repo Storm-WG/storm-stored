@@ -5,7 +5,7 @@ members = [".", "rpc", "cli"]
 [package]
 name = "store_daemon"
 description = "Storage daemon"
-version = "0.8.0-beta.2"
+version = "0.8.0-beta.3"
 authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
 license = "MIT"
 keywords = ["daemon", "sled", "database"]
@@ -32,7 +32,7 @@ internet2 = { version = "0.8.0-beta.1", features = ["keygen", "zmq"] }
 microservices = { version = "0.8.0-rc.2", default-features = false, features = ["node"], git = "https://github.com/Internet2-WG/rust-microservices" }
 bitcoin_hashes = "0.10.0"
 storm-core = "0.2"
-store_rpc = { version = "0.8.0-beta.1", path = "rpc" }
+store_rpc = { version = "0.8.0-beta.3", path = "rpc" }
 # DB
 sled = "0.34"
 # OS
