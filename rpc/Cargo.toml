@@ -1,7 +1,7 @@
 [package]
 name = "store_rpc"
 description = "Storage daemon RPC API"
-version = "0.8.0-beta.3"
+version = "0.8.0-rc.1"
 authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
 license = "MIT"
 keywords = ["daemon", "sled", "database"]
@@ -15,11 +15,11 @@ name = "store_rpc"
 
 [dependencies]
 amplify = "3.12.0"
-strict_encoding = "1.8.1"
-commit_verify = "0.7.0" # TODO: Update to 0.8
-internet2 = "0.8.0-beta.1"
-microservices = { version = "0.8.0-rc.4", default-features = false, features = ["client"], git = "https://github.com/Internet2-WG/rust-microservices" }
-storm-core = "0.2.0"
+strict_encoding = "0.8.0"
+commit_verify = "0.8.0"
+internet2 = "0.8.0"
+microservices = { version = "0.8.0", default-features = false, features = ["client"] }
+storm-core = "0.3.0"
 rand = "0.8"
 serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
 serde_with = { version = "1.8", optional = true }
