@@ -12,8 +12,6 @@
 use amplify::Slice32;
 use storm::Chunk;
 
-use crate::PrimaryKey;
-
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Display)]
 #[derive(Api)]
 #[api(encoding = "strict")]
@@ -53,7 +51,7 @@ pub enum Request {
 #[display("{table}, {key}, ...")]
 pub struct StoreReq {
     pub table: String,
-    pub key: PrimaryKey,
+    pub key: Slice32,
     pub chunk: Chunk,
 }
 
@@ -62,7 +60,7 @@ pub struct StoreReq {
 #[display("{table}, {key}")]
 pub struct RetrieveReq {
     pub table: String,
-    pub key: PrimaryKey,
+    pub key: Slice32,
 }
 
 #[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
@@ -70,6 +68,6 @@ pub struct RetrieveReq {
 #[display("{table}, {key}, ...")]
 pub struct InsertReq {
     pub table: String,
-    pub key: PrimaryKey,
+    pub key: Slice32,
     pub item: Slice32,
 }

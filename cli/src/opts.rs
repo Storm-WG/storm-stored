@@ -11,8 +11,9 @@
 
 use std::path::PathBuf;
 
+use amplify::Slice32;
 use internet2::addr::ServiceAddr;
-use store_rpc::{PrimaryKey, STORED_RPC_ENDPOINT};
+use store_rpc::STORED_RPC_ENDPOINT;
 
 /// Command-line tool for working with store daemon
 #[derive(Parser, Clone, PartialEq, Eq, Debug)]
@@ -75,7 +76,7 @@ pub enum Command {
         table: String,
 
         /// Primary key for storage
-        key: PrimaryKey,
+        key: Slice32,
 
         /// File to put into database. If no file is given, data are read from
         /// STDIN.
@@ -92,7 +93,7 @@ pub enum Command {
         table: String,
 
         /// Object identifier used for store.
-        key: PrimaryKey,
+        key: Slice32,
 
         /// File for output. The data are printed to stdout if no file is given.
         output: Option<PathBuf>,

@@ -11,12 +11,13 @@
 
 use std::collections::BTreeSet;
 
+use amplify::Slice32;
 use internet2::presentation;
 use microservices::rpc;
 use microservices::rpc::ServerError;
 use storm::{Chunk, ChunkId};
 
-use crate::{FailureCode, PrimaryKey};
+use crate::FailureCode;
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Display, From)]
 #[derive(Api)]
@@ -56,7 +57,7 @@ pub enum Reply {
 
     #[api(type = 0x0012)]
     #[display("key_absent({0})")]
-    KeyAbsent(PrimaryKey),
+    KeyAbsent(Slice32),
 }
 
 impl rpc::Reply for Reply {}

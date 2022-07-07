@@ -1826,6 +1826,7 @@ name = "store_rpc"
 version = "0.8.0-rc.2"
 dependencies = [
  "amplify",
+ "bitcoin_hashes",
  "colored",
  "commit_verify",
  "internet2",

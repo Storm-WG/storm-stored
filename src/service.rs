@@ -151,15 +151,21 @@ impl Runtime {
         Ok(Reply::Count(count as u64))
     }
 
-    fn store(&self, table: String, key: PrimaryKey, chunk: Chunk) -> Result<Reply, DaemonError> {
+    fn store(
+        &self,
+        table: String,
+        key: impl PrimaryKey,
+        chunk: Chunk,
+    ) -> Result<Reply, DaemonError> {
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         let chunk_id = chunk.consensus_commit();
-        tree.insert(key, chunk.as_ref())?;
+        tree.insert(key.into_slice32(), chunk.as_ref())?;
         tree.flush()?;
         Ok(Reply::ChunkId(chunk_id))
     }
 
-    fn retrieve(&self, table: String, key: PrimaryKey) -> Result<Reply, DaemonError> {
+    fn retrieve(&self, table: String, key: impl PrimaryKey) -> Result<Reply, DaemonError> {
+        let key = key.into_slice32();
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         Ok(match tree.get(key)? {
             None => Reply::KeyAbsent(key),
@@ -167,7 +173,13 @@ impl Runtime {
         })
     }
 
-    fn insert(&self, table: String, key: PrimaryKey, item: Slice32) -> Result<Reply, DaemonError> {
+    fn insert(
+        &self,
+        table: String,
+        key: impl PrimaryKey,
+        item: Slice32,
+    ) -> Result<Reply, DaemonError> {
+        let key = key.into_slice32();
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         let data = tree.get(key)?.unwrap_or_default();
         let mut set = BTreeSet::<Slice32>::strict_deserialize(data)?;

@@ -65,11 +65,11 @@ impl Client {
     pub fn store(
         &mut self,
         table: impl ToString,
-        key: impl Into<PrimaryKey>,
+        key: impl PrimaryKey,
         data: &impl TryToChunk,
     ) -> Result<ChunkId, ServerError<FailureCode>> {
         let table = table.to_string();
-        let key = key.into();
+        let key = key.into_slice32();
         trace!("Store object with id {}", key);
         let chunk = data.try_to_chunk().map_err(|_| FailureCode::Encoding)?;
         let reply = self.request(Request::Store(StoreReq { table, key, chunk }))?;
@@ -86,13 +86,13 @@ impl Client {
     pub fn retrieve<D>(
         &mut self,
         table: impl ToString,
-        key: impl Into<PrimaryKey>,
+        key: impl PrimaryKey,
     ) -> Result<Option<D>, ServerError<FailureCode>>
     where
         D: TryFromChunk,
     {
         let table = table.to_string();
-        let key = key.into();
+        let key = key.into_slice32();
         trace!("Retrieve object with id {}", key);
         let reply = self.request(Request::Retrieve(RetrieveReq { table, key }))?;
         match reply {
@@ -111,7 +111,7 @@ impl Client {
     pub fn retrieve_chunk(
         &mut self,
         table: impl ToString,
-        key: impl Into<PrimaryKey>,
+        key: impl PrimaryKey,
     ) -> Result<Option<Chunk>, ServerError<FailureCode>> {
         self.retrieve(table, key)
     }
@@ -119,11 +119,11 @@ impl Client {
     pub fn insert_into_set(
         &mut self,
         table: impl ToString,
-        key: impl Into<PrimaryKey>,
+        key: impl PrimaryKey,
         item: impl Into<Slice32>,
     ) -> Result<(), ServerError<FailureCode>> {
         let table = table.to_string();
-        let key = key.into();
+        let key = key.into_slice32();
         let item = item.into();
         let reply = self.request(Request::Insert(InsertReq { table, key, item }))?;
         match reply {
