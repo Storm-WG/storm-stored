@@ -5,7 +5,7 @@ members = [".", "rpc", "cli"]
 [package]
 name = "store_daemon"
 description = "Storage daemon"
-version = "0.8.0-rc.1"
+version = "0.8.0-rc.2"
 authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
 license = "MIT"
 keywords = ["daemon", "sled", "database"]
@@ -31,8 +31,8 @@ commit_verify = "0.8.0"
 internet2 = { version = "0.8.0", features = ["keygen", "zmq"] }
 microservices = { version = "0.8.0", default-features = false, features = ["node"] }
 bitcoin_hashes = "0.10.0"
-storm-core = "0.7.1"
-store_rpc = { version = "0.8.0-rc.1", path = "rpc" }
+storm-core = "0.7.3"
+store_rpc = { version = "0.8.0-rc.2", path = "rpc" }
 # DB
 sled = "0.34"
 # OS
@@ -52,8 +52,8 @@ rpassword = { version = "5.0.1", optional = true }
 amplify = "3.12.1"
 internet2 = "0.8.0"
 microservices = { version = "0.8.0", default-features = false }
-storm-core = "0.7.1"
-store_rpc = { version = "0.8.0-rc.1", path = "rpc" }
+storm-core = "0.7.3"
+store_rpc = { version = "0.8.0-rc.2", path = "rpc" }
 clap = { version = "~3.1.18", features = ["env", "derive"] }
 clap_complete = "~3.1.4"
 log = { version = "0.4", features = ["max_level_trace", "release_max_level_debug"] }

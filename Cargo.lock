@@ -1778,7 +1778,7 @@ dependencies = [
 
 [[package]]
 name = "store-cli"
-version = "0.8.0-rc.1"
+version = "0.8.0-rc.2"
 dependencies = [
  "amplify",
  "clap",
@@ -1795,7 +1795,7 @@ dependencies = [
 
 [[package]]
 name = "store_daemon"
-version = "0.8.0-rc.1"
+version = "0.8.0-rc.2"
 dependencies = [
  "amplify",
  "bitcoin_hashes",
@@ -1823,7 +1823,7 @@ dependencies = [
 
 [[package]]
 name = "store_rpc"
-version = "0.8.0-rc.1"
+version = "0.8.0-rc.2"
 dependencies = [
  "amplify",
  "colored",
