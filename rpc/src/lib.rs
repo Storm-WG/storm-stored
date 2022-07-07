@@ -33,7 +33,7 @@ mod request;
 
 use std::borrow::Borrow;
 
-use amplify::{Slice32, Wrapper};
+use amplify::Slice32;
 pub use client::Client;
 pub use error::FailureCode;
 pub use reply::Reply;
@@ -47,13 +47,39 @@ pub trait PrimaryKey: Copy {
 }
 
 impl<W> PrimaryKey for W
-where
-    W: Wrapper + Copy,
-    W::Inner: Borrow<[u8]>,
+where W: Copy + Borrow<[u8]>
 {
     fn into_array(self) -> [u8; 32] {
         let mut buf = [0u8; 32];
-        buf.copy_from_slice(self.as_inner().borrow());
+        buf.copy_from_slice(self.borrow());
         buf
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use amplify::Slice32;
+    use bitcoin_hashes::sha256::HashEngine;
+    use bitcoin_hashes::{sha256, sha256t, Hash};
+
+    use crate::PrimaryKey;
+
+    #[test]
+    fn primary_key_conversion() {
+        #[derive(Copy, Clone)]
+        pub struct Tag;
+        impl sha256t::Tag for Tag {
+            fn engine() -> HashEngine { sha256::Hash::engine() }
+        }
+
+        #[derive(Wrapper, Copy, Clone, Default, From)]
+        #[wrapper(BorrowSlice)]
+        pub struct Id(sha256t::Hash<Tag>);
+
+        fn take_primary_key(_: impl PrimaryKey) {}
+
+        take_primary_key(Slice32::default());
+        take_primary_key(sha256::Hash::default());
+        take_primary_key(Id::default());
     }
 }
