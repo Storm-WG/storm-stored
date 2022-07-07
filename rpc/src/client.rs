@@ -136,8 +136,11 @@ impl Client {
         }
     }
 
-    pub fn ids(&mut self, table: String) -> Result<BTreeSet<ChunkId>, ServerError<FailureCode>> {
-        let reply = self.request(Request::ListIds(table))?;
+    pub fn ids(
+        &mut self,
+        table: impl ToString,
+    ) -> Result<BTreeSet<ChunkId>, ServerError<FailureCode>> {
+        let reply = self.request(Request::ListIds(table.to_string()))?;
         match reply {
             Reply::Ids(ids) => Ok(ids),
             Reply::KeyAbsent(_) => Ok(empty!()),
