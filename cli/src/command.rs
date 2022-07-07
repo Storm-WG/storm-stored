@@ -13,6 +13,7 @@ use microservices::cli;
 use microservices::rpc::ServerError;
 use microservices::shell::Exec;
 use store_rpc::{Client, FailureCode};
+use storm::Chunk;
 
 use crate::{Command, Opts};
 
@@ -44,11 +45,12 @@ impl Exec for Opts {
                 file,
             } => {
                 let data = cli::read_file_or_stdin(file).expect("unable to read the file");
-                let chunk_id = client.store(db, key, &data)?;
+                let chunk = Chunk::try_from(&data)?;
+                let chunk_id = client.store(db, key, &chunk)?;
                 eprint!("Stored chunk id ");
                 println!("{}", chunk_id);
             }
-            Command::Retrieve { table, key, output } => match client.retrieve(table, key)? {
+            Command::Retrieve { table, key, output } => match client.retrieve_chunk(table, key)? {
                 Some(chunk) => {
                     eprintln!("success");
                     let output_filename =

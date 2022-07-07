@@ -18,7 +18,7 @@ use internet2::{
 };
 use microservices::rpc::ServerError;
 use microservices::ZMQ_CONTEXT;
-use storm::{Chunk, ChunkId};
+use storm::{Chunk, ChunkId, TryFromChunk, TryToChunk};
 
 use crate::{FailureCode, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
 
@@ -41,8 +41,8 @@ impl Client {
         })
     }
 
-    pub fn use_table(&mut self, table: String) -> Result<(), ServerError<FailureCode>> {
-        self.request(Request::Use(table))?.success_or_failure()
+    pub fn use_table(&mut self, table: impl ToString) -> Result<(), ServerError<FailureCode>> {
+        self.request(Request::Use(table.to_string()))?.success_or_failure()
     }
 
     pub fn list_tables(&mut self) -> Result<BTreeSet<String>, ServerError<FailureCode>> {
@@ -53,8 +53,8 @@ impl Client {
         }
     }
 
-    pub fn count(&mut self, table: String) -> Result<u64, ServerError<FailureCode>> {
-        match self.request(Request::Count(table))? {
+    pub fn count(&mut self, table: impl ToString) -> Result<u64, ServerError<FailureCode>> {
+        match self.request(Request::Count(table.to_string()))? {
             Reply::Count(count) => Ok(count),
             Reply::Failure(failure) => Err(failure.into()),
             _ => Err(ServerError::UnexpectedServerResponse),
@@ -63,30 +63,56 @@ impl Client {
 
     pub fn store(
         &mut self,
-        table: String,
-        key: PrimaryKey,
-        data: impl AsRef<[u8]>,
+        table: impl ToString,
+        key: impl Into<PrimaryKey>,
+        data: &impl TryToChunk,
     ) -> Result<ChunkId, ServerError<FailureCode>> {
-        let chunk = Chunk::try_from(data.as_ref())?;
+        let table = table.to_string();
+        let key = key.into();
+        trace!("Store object with id {}", key);
+        let chunk = data.try_to_chunk().map_err(|_| FailureCode::Encoding)?;
         let reply = self.request(Request::Store(StoreReq { table, key, chunk }))?;
         match reply {
             Reply::ChunkId(chunk_id) => Ok(chunk_id),
-            Reply::Failure(failure) => Err(failure.into()),
+            Reply::Failure(failure) => {
+                warn!("Failure storing object with id {}", key);
+                Err(failure.into())
+            }
             _ => Err(ServerError::UnexpectedServerResponse),
         }
     }
 
-    pub fn retrieve(
+    pub fn retrieve<D>(
         &mut self,
-        table: String,
-        key: PrimaryKey,
-    ) -> Result<Option<Chunk>, ServerError<FailureCode>> {
+        table: impl ToString,
+        key: impl Into<PrimaryKey>,
+    ) -> Result<Option<D>, ServerError<FailureCode>>
+    where
+        D: TryFromChunk,
+    {
+        let table = table.to_string();
+        let key = key.into();
+        trace!("Retrieve object with id {}", key);
         let reply = self.request(Request::Retrieve(RetrieveReq { table, key }))?;
         match reply {
-            Reply::Chunk(chunk) => Ok(Some(chunk)),
-            Reply::KeyAbsent(_) => Ok(None),
+            Reply::Chunk(chunk) => D::try_from_chunk(chunk)
+                .map_err(|_| FailureCode::Encoding)
+                .map_err(ServerError::from)
+                .map(Some),
+            Reply::KeyAbsent(_) => {
+                warn!("Object with id {} is not found", key);
+                Ok(None)
+            }
             _ => Err(ServerError::UnexpectedServerResponse),
         }
+    }
+
+    pub fn retrieve_chunk(
+        &mut self,
+        table: impl ToString,
+        key: impl Into<PrimaryKey>,
+    ) -> Result<Option<Chunk>, ServerError<FailureCode>> {
+        self.retrieve(table, key)
     }
 
     pub fn ids(&mut self, table: String) -> Result<BTreeSet<ChunkId>, ServerError<FailureCode>> {

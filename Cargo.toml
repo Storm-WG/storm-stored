@@ -31,7 +31,7 @@ commit_verify = "0.8.0"
 internet2 = { version = "0.8.0", features = ["keygen", "zmq"] }
 microservices = { version = "0.8.0", default-features = false, features = ["node"] }
 bitcoin_hashes = "0.10.0"
-storm-core = "0.3.0"
+storm-core = "0.7.1"
 store_rpc = { version = "0.8.0-rc.1", path = "rpc" }
 # DB
 sled = "0.34"
@@ -52,7 +52,7 @@ rpassword = { version = "5.0.1", optional = true }
 amplify = "3.12.1"
 internet2 = "0.8.0"
 microservices = { version = "0.8.0", default-features = false }
-storm-core = "0.3.0"
+storm-core = "0.7.1"
 store_rpc = { version = "0.8.0-rc.1", path = "rpc" }
 clap = { version = "~3.1.18", features = ["env", "derive"] }
 clap_complete = "~3.1.4"

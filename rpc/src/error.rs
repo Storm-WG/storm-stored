@@ -10,16 +10,19 @@
 // If not, see <https://opensource.org/licenses/MIT>.
 
 use microservices::rpc;
+use microservices::rpc::ServerError;
 
-#[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
+#[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Display)]
+#[display(doc_comments)]
 pub enum FailureCode {
     /// Catch-all
+    #[display("unknown error")]
     Unknown = 0xFFF,
 
-    /// Database
+    /// internal database error
     Database = 0x01,
 
-    /// Encoding
+    /// internal encoding erorr
     Encoding = 0x02,
 }
 
@@ -37,6 +40,19 @@ impl From<FailureCode> for u16 {
 
 impl From<FailureCode> for rpc::FailureCode<FailureCode> {
     fn from(code: FailureCode) -> Self { rpc::FailureCode::Other(code) }
+}
+
+impl From<FailureCode> for rpc::Failure<FailureCode> {
+    fn from(code: FailureCode) -> Self {
+        rpc::Failure {
+            code: code.into(),
+            info: code.to_string(),
+        }
+    }
+}
+
+impl From<FailureCode> for ServerError<FailureCode> {
+    fn from(code: FailureCode) -> Self { ServerError::ServerFailure(code.into()) }
 }
 
 impl rpc::FailureCodeExt for FailureCode {}
