@@ -11,6 +11,7 @@
 
 use std::collections::{BTreeSet, HashMap};
 
+use amplify::Slice32;
 use bitcoin_hashes::Hash;
 use commit_verify::commit_encode::ConsensusCommit;
 use internet2::session::LocalSession;
@@ -21,8 +22,9 @@ use microservices::error::BootstrapError;
 use microservices::node::TryService;
 use microservices::rpc::ClientError;
 use microservices::ZMQ_CONTEXT;
-use store_rpc::{PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
+use store_rpc::{InsertReq, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
 use storm::{Chunk, ChunkId};
+use strict_encoding::{StrictDecode, StrictEncode};
 
 use crate::{Config, DaemonError, LaunchError, STORED_STORAGE_FILE};
 
@@ -126,6 +128,7 @@ impl Runtime {
             Request::Count(table) => self.count(table),
             Request::Store(StoreReq { table, key, chunk }) => self.store(table, key, chunk),
             Request::Retrieve(RetrieveReq { table, key }) => self.retrieve(table, key),
+            Request::Insert(InsertReq { table, key, item }) => self.insert(table, key, item),
             Request::ListIds(table) => self.list_ids(table),
         }
         .map_err(Reply::from)
@@ -162,6 +165,16 @@ impl Runtime {
             None => Reply::KeyAbsent(key),
             Some(data) => Reply::Chunk(data.as_ref().try_into()?),
         })
+    }
+
+    fn insert(&self, table: String, key: PrimaryKey, item: Slice32) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
+        let data = tree.get(key)?.unwrap_or_default();
+        let mut set = BTreeSet::<Slice32>::strict_deserialize(data)?;
+        set.insert(item);
+        tree.insert(key, set.strict_serialize()?)?;
+        tree.flush()?;
+        Ok(Reply::Success)
     }
 
     fn list_ids(&self, table: String) -> Result<Reply, DaemonError> {

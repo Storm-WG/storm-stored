@@ -9,6 +9,7 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use amplify::Slice32;
 use storm::Chunk;
 
 use crate::PrimaryKey;
@@ -39,6 +40,10 @@ pub enum Request {
     Retrieve(RetrieveReq),
 
     #[api(type = 0x14)]
+    #[display("insert({0})")]
+    Insert(InsertReq),
+
+    #[api(type = 0x16)]
     #[display("list_ids({0})")]
     ListIds(String),
 }
@@ -58,4 +63,13 @@ pub struct StoreReq {
 pub struct RetrieveReq {
     pub table: String,
     pub key: PrimaryKey,
+}
+
+#[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
+#[derive(NetworkEncode, NetworkDecode)]
+#[display("{table}, {key}, ...")]
+pub struct InsertReq {
+    pub table: String,
+    pub key: PrimaryKey,
+    pub item: Slice32,
 }

@@ -11,6 +11,7 @@
 
 use std::collections::BTreeSet;
 
+use amplify::Slice32;
 use internet2::addr::ServiceAddr;
 use internet2::session::LocalSession;
 use internet2::{
@@ -20,7 +21,7 @@ use microservices::rpc::ServerError;
 use microservices::ZMQ_CONTEXT;
 use storm::{Chunk, ChunkId, TryFromChunk, TryToChunk};
 
-use crate::{FailureCode, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
+use crate::{FailureCode, InsertReq, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
 
 pub struct Client {
     // TODO: Replace with RpcSession once its implementation is completed
@@ -113,6 +114,26 @@ impl Client {
         key: impl Into<PrimaryKey>,
     ) -> Result<Option<Chunk>, ServerError<FailureCode>> {
         self.retrieve(table, key)
+    }
+
+    pub fn insert_into_set(
+        &mut self,
+        table: impl ToString,
+        key: impl Into<PrimaryKey>,
+        item: impl Into<Slice32>,
+    ) -> Result<(), ServerError<FailureCode>> {
+        let table = table.to_string();
+        let key = key.into();
+        let item = item.into();
+        let reply = self.request(Request::Insert(InsertReq { table, key, item }))?;
+        match reply {
+            Reply::Success => Ok(()),
+            Reply::Failure(failure) => {
+                warn!("Failure storing object with id {}", key);
+                Err(failure.into())
+            }
+            _ => Err(ServerError::UnexpectedServerResponse),
+        }
     }
 
     pub fn ids(&mut self, table: String) -> Result<BTreeSet<ChunkId>, ServerError<FailureCode>> {
