@@ -1790,7 +1790,7 @@ dependencies = [
  "microservices",
  "shellexpand",
  "store_rpc",
- "storm-core",
+ "storm-core 0.7.3",
 ]
 
 [[package]]
@@ -1817,13 +1817,13 @@ dependencies = [
  "shellexpand",
  "sled",
  "store_rpc",
- "storm-core",
+ "storm-core 0.7.3",
  "strict_encoding",
 ]
 
 [[package]]
 name = "store_rpc"
-version = "0.8.0-rc.3"
+version = "0.8.0-rc.4"
 dependencies = [
  "amplify",
  "bitcoin_hashes",
@@ -1836,7 +1836,7 @@ dependencies = [
  "serde 1.0.138",
  "serde_with",
  "serde_yaml",
- "storm-core",
+ "storm-core 0.8.0-alpha.1",
  "strict_encoding",
 ]
 
@@ -1845,6 +1845,21 @@ name = "storm-core"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5de837a62c7c972e1b890eea881a0762516c5a9bcf8a7af83b54f81b6869921d"
+dependencies = [
+ "amplify",
+ "bitcoin_hashes",
+ "commit_verify",
+ "internet2",
+ "once_cell",
+ "stens",
+ "strict_encoding",
+]
+
+[[package]]
+name = "storm-core"
+version = "0.8.0-alpha.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40a08e0d389e300415db5520682b10c8cb6c897f740f24c5bcb9a9a96e1d4343"
 dependencies = [
  "amplify",
  "bitcoin_hashes",
