@@ -183,7 +183,11 @@ impl Runtime {
         let key = key.into_slice32();
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
         let data = tree.get(key)?.unwrap_or_default();
-        let mut set = BTreeSet::<Slice32>::strict_deserialize(data)?;
+        let mut set = if data.is_empty() {
+            BTreeSet::new()
+        } else {
+            BTreeSet::<Slice32>::strict_deserialize(data)?
+        };
         set.insert(item);
         tree.insert(key, set.strict_serialize()?)?;
         tree.flush()?;

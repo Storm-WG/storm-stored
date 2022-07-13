@@ -5,7 +5,7 @@ members = [".", "rpc", "cli"]
 [package]
 name = "store_daemon"
 description = "Storage daemon"
-version = "0.8.0-rc.5"
+version = "0.8.0-rc.6"
 authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
 license = "MIT"
 keywords = ["daemon", "sled", "database"]
