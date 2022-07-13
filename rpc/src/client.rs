@@ -21,7 +21,9 @@ use microservices::rpc::ServerError;
 use microservices::ZMQ_CONTEXT;
 use storm::{Chunk, ChunkId, TryFromChunk, TryToChunk};
 
-use crate::{FailureCode, InsertReq, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
+use crate::{
+    CheckUnknownReq, FailureCode, InsertReq, PrimaryKey, Reply, Request, RetrieveReq, StoreReq,
+};
 
 pub struct Client {
     // TODO: Replace with RpcSession once its implementation is completed
@@ -143,7 +145,21 @@ impl Client {
         let reply = self.request(Request::ListIds(table.to_string()))?;
         match reply {
             Reply::Ids(ids) => Ok(ids),
-            Reply::KeyAbsent(_) => Ok(empty!()),
+            _ => Err(ServerError::UnexpectedServerResponse),
+        }
+    }
+
+    pub fn filter_unknown(
+        &mut self,
+        table: impl ToString,
+        ids: BTreeSet<ChunkId>,
+    ) -> Result<BTreeSet<ChunkId>, ServerError<FailureCode>> {
+        let reply = self.request(Request::CheckUnknown(CheckUnknownReq {
+            table: table.to_string(),
+            ids,
+        }))?;
+        match reply {
+            Reply::Ids(ids) => Ok(ids),
             _ => Err(ServerError::UnexpectedServerResponse),
         }
     }

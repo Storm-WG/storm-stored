@@ -9,8 +9,10 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+use std::collections::BTreeSet;
+
 use amplify::Slice32;
-use storm::Chunk;
+use storm::{Chunk, ChunkId};
 
 #[derive(Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug, Display)]
 #[derive(Api)]
@@ -44,6 +46,10 @@ pub enum Request {
     #[api(type = 0x16)]
     #[display("list_ids({0})")]
     ListIds(String),
+
+    #[api(type = 0x18)]
+    #[display("check_unknown({0})")]
+    CheckUnknown(CheckUnknownReq),
 }
 
 #[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
@@ -70,4 +76,12 @@ pub struct InsertReq {
     pub table: String,
     pub key: Slice32,
     pub item: Slice32,
+}
+
+#[derive(Clone, Ord, PartialOrd, PartialEq, Eq, Debug, Hash, Display)]
+#[derive(NetworkEncode, NetworkDecode)]
+#[display("{table}, ...")]
+pub struct CheckUnknownReq {
+    pub table: String,
+    pub ids: BTreeSet<ChunkId>,
 }

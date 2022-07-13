@@ -37,7 +37,7 @@ use amplify::Slice32;
 pub use client::Client;
 pub use error::FailureCode;
 pub use reply::Reply;
-pub use request::{InsertReq, Request, RetrieveReq, StoreReq};
+pub use request::{CheckUnknownReq, InsertReq, Request, RetrieveReq, StoreReq};
 
 pub const STORED_RPC_ENDPOINT: &str = "0.0.0.0:60960";
 

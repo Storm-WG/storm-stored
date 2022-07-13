@@ -22,7 +22,7 @@ use microservices::error::BootstrapError;
 use microservices::node::TryService;
 use microservices::rpc::ClientError;
 use microservices::ZMQ_CONTEXT;
-use store_rpc::{InsertReq, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
+use store_rpc::{CheckUnknownReq, InsertReq, PrimaryKey, Reply, Request, RetrieveReq, StoreReq};
 use storm::{Chunk, ChunkId};
 use strict_encoding::{StrictDecode, StrictEncode};
 
@@ -130,6 +130,7 @@ impl Runtime {
             Request::Retrieve(RetrieveReq { table, key }) => self.retrieve(table, key),
             Request::Insert(InsertReq { table, key, item }) => self.insert(table, key, item),
             Request::ListIds(table) => self.list_ids(table),
+            Request::CheckUnknown(CheckUnknownReq { table, ids }) => self.filter_ids(table, ids),
         }
         .map_err(Reply::from)
     }
@@ -197,6 +198,30 @@ impl Runtime {
                 Ok((ivec, _)) => Ok(ChunkId::from_slice(&*ivec)
                     .map_err(|_| sled::Error::ReportableBug(s!("non-standard id")))?),
                 Err(e) => Err(e),
+            })
+            .collect::<Result<BTreeSet<_>, sled::Error>>()?;
+        Ok(Reply::Ids(keys))
+    }
+
+    fn filter_ids(&self, table: String, ids: BTreeSet<ChunkId>) -> Result<Reply, DaemonError> {
+        let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
+        let keys = tree
+            .range::<&[u8], _>(..)
+            .filter_map(|res| match res {
+                Ok((ivec, _)) => {
+                    let id = match ChunkId::from_slice(&*ivec) {
+                        Err(_) => {
+                            return Some(Err(sled::Error::ReportableBug(s!("non-standard id"))))
+                        }
+                        Ok(chunk_id) => chunk_id,
+                    };
+                    if ids.contains(&id) {
+                        Some(Ok(id))
+                    } else {
+                        None
+                    }
+                }
+                Err(e) => Some(Err(e)),
             })
             .collect::<Result<BTreeSet<_>, sled::Error>>()?;
         Ok(Reply::Ids(keys))
