@@ -203,27 +203,18 @@ impl Runtime {
         Ok(Reply::Ids(keys))
     }
 
-    fn filter_ids(&self, table: String, ids: BTreeSet<ChunkId>) -> Result<Reply, DaemonError> {
+    fn filter_ids(&self, table: String, mut ids: BTreeSet<ChunkId>) -> Result<Reply, DaemonError> {
         let tree = self.trees.get(&table).ok_or(DaemonError::UnknownTable(table))?;
-        let keys = tree
-            .range::<&[u8], _>(..)
-            .filter_map(|res| match res {
-                Ok((ivec, _)) => {
-                    let id = match ChunkId::from_slice(&*ivec) {
-                        Err(_) => {
-                            return Some(Err(sled::Error::ReportableBug(s!("non-standard id"))))
-                        }
-                        Ok(chunk_id) => chunk_id,
-                    };
-                    if ids.contains(&id) {
-                        Some(Ok(id))
-                    } else {
-                        None
-                    }
-                }
-                Err(e) => Some(Err(e)),
-            })
-            .collect::<Result<BTreeSet<_>, sled::Error>>()?;
-        Ok(Reply::Ids(keys))
+        // TODO: Improve efficiency by restricting the range
+        for res in tree.range::<&[u8], _>(..) {
+            let (ivec, _) = res?;
+            let id = ChunkId::from_slice(&*ivec).map_err(|_| {
+                DaemonError::Encoding(strict_encoding::Error::DataIntegrityError(s!(
+                    "invalid chunk id data"
+                )))
+            })?;
+            ids.remove(&id);
+        }
+        Ok(Reply::Ids(ids))
     }
 }
