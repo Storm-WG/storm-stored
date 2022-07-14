@@ -826,9 +826,9 @@ dependencies = [
 
 [[package]]
 name = "inet2_addr"
-version = "0.8.1"
+version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a53365b64a5e05c8f0169117a28aa9608db615ef5e5a0be66c472699f15ae991"
+checksum = "f1007a4b840c2db58cfb6d1a262c33f1a694383b46bd2eda4054f0d84eb08abd"
 dependencies = [
  "amplify",
  "ed25519-dalek",
@@ -876,9 +876,9 @@ dependencies = [
 
 [[package]]
 name = "internet2"
-version = "0.8.0"
+version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9984b212582a17c8729750ceb483d31d5982b9dff925f7e15ae1ac725a193a1c"
+checksum = "cdb989d923b9e5d091c57269869975016eef11af1d9670ae475a67e46bde941c"
 dependencies = [
  "amplify",
  "bitcoin_hashes",
@@ -1796,7 +1796,7 @@ dependencies = [
 
 [[package]]
 name = "store-cli"
-version = "0.8.0-rc.5"
+version = "0.8.0"
 dependencies = [
  "amplify",
  "clap",
@@ -1813,7 +1813,7 @@ dependencies = [
 
 [[package]]
 name = "store_daemon"
-version = "0.8.0-rc.6"
+version = "0.8.0"
 dependencies = [
  "amplify",
  "bitcoin_hashes",
@@ -1841,7 +1841,7 @@ dependencies = [
 
 [[package]]
 name = "store_rpc"
-version = "0.8.0-rc.5"
+version = "0.8.0"
 dependencies = [
  "amplify",
  "bitcoin_hashes",
@@ -1860,9 +1860,9 @@ dependencies = [
 
 [[package]]
 name = "storm-core"
-version = "0.8.0-beta.4"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f748a74164692335f05d129feaada75d54d605d42bab542fdc732078cea86e24"
+checksum = "f8c86eb19d8639c31589447f2a7c3488b51b9b4ff254286ab6705bf348abb204"
 dependencies = [
  "amplify",
  "bitcoin_hashes",
