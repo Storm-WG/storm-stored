@@ -22,8 +22,11 @@ pub enum FailureCode {
     /// internal database error
     Database = 0x01,
 
-    /// internal encoding erorr
+    /// internal encoding error
     Encoding = 0x02,
+
+    /// internal bitcoin hash error
+    Hash = 0x03,
 }
 
 impl From<u16> for FailureCode {
@@ -35,11 +38,15 @@ impl From<u16> for FailureCode {
 }
 
 impl From<FailureCode> for u16 {
-    fn from(code: FailureCode) -> Self { code as u16 }
+    fn from(code: FailureCode) -> Self {
+        code as u16
+    }
 }
 
 impl From<FailureCode> for rpc::FailureCode<FailureCode> {
-    fn from(code: FailureCode) -> Self { rpc::FailureCode::Other(code) }
+    fn from(code: FailureCode) -> Self {
+        rpc::FailureCode::Other(code)
+    }
 }
 
 impl From<FailureCode> for rpc::Failure<FailureCode> {
@@ -52,7 +59,9 @@ impl From<FailureCode> for rpc::Failure<FailureCode> {
 }
 
 impl From<FailureCode> for ServerError<FailureCode> {
-    fn from(code: FailureCode) -> Self { ServerError::ServerFailure(code.into()) }
+    fn from(code: FailureCode) -> Self {
+        ServerError::ServerFailure(code.into())
+    }
 }
 
 impl rpc::FailureCodeExt for FailureCode {}

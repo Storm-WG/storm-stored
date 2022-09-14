@@ -34,7 +34,8 @@ bitcoin_hashes = "0.10.0"
 storm-core = "0.8.0"
 store_rpc = { version = "0.8.0", path = "rpc" }
 # DB
-sled = "0.34"
+sled = { version = "0.34", optional = true }
+redb = { version = "0.6.1", optional = true }
 # OS
 chrono = "0.4"
 nix = "0.19"
@@ -61,7 +62,7 @@ shellexpand = "2"
 configure_me_codegen = "0.4"
 
 [features]
-default = ["server"]
+default = ["server", "redb"]
 
 # Server is a standalone application that runs daemons.
 # Required for all apps that can be launched from command-line shell as binaries
