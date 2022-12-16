@@ -12,22 +12,34 @@
 use microservices::rpc;
 use store_rpc::{FailureCode, Reply};
 
-#[derive(Clone, PartialEq, Eq, Debug, Display, Error, From)]
+#[derive(Debug, Display, Error, From)]
 #[display(doc_comments)]
 pub enum LaunchError {
+    #[cfg(feature = "sled")]
     #[from]
     #[display(inner)]
     Database(sled::Error),
+
+    #[cfg(feature = "redb")]
+    #[from]
+    #[display(inner)]
+    Database(redb::Error),
 }
 
 impl microservices::error::Error for LaunchError {}
 
-#[derive(Clone, PartialEq, Eq, Debug, Display, Error, From)]
+#[derive(Debug, Display, Error, From)]
 #[display(doc_comments)]
 pub enum DaemonError {
+    #[cfg(feature = "sled")]
     #[from]
     #[display(inner)]
     Database(sled::Error),
+
+    #[cfg(feature = "redb")]
+    #[from]
+    #[display(inner)]
+    Database(redb::Error),
 
     /// unknown database table '{0}'
     UnknownTable(String),
@@ -35,6 +47,10 @@ pub enum DaemonError {
     #[from]
     #[display(inner)]
     Encoding(strict_encoding::Error),
+
+    #[from]
+    #[display(inner)]
+    Hash(bitcoin_hashes::Error),
 }
 
 impl microservices::error::Error for DaemonError {}
@@ -45,6 +61,7 @@ impl From<DaemonError> for Reply {
             DaemonError::Database(_) => FailureCode::Database,
             DaemonError::UnknownTable(_) => FailureCode::Database,
             DaemonError::Encoding(_) => FailureCode::Encoding,
+            DaemonError::Hash(_) => FailureCode::Hash,
         };
         Reply::Failure(rpc::Failure {
             code: code.into(),
