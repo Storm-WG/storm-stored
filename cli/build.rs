@@ -28,7 +28,7 @@ fn main() -> Result<(), configure_me_codegen::Error> {
     let outdir = "../shell";
 
     fs::create_dir_all(outdir).expect("failed to create shell dir");
-    let mut app= cli::Opts::command();
+    let mut app = cli::Opts::command();
     let name = app.get_name().to_string();
     generate_to(Bash, &mut app, &name, outdir)?;
     generate_to(PowerShell, &mut app, &name, outdir)?;

@@ -53,8 +53,10 @@ impl Exec for Opts {
             Command::Retrieve { table, key, output } => match client.retrieve_chunk(table, key)? {
                 Some(chunk) => {
                     eprintln!("success");
-                    let output_filename =
-                        output.as_deref().map(|f| f.display().to_string()).unwrap_or_else(|| s!("STDOUT"));
+                    let output_filename = output
+                        .as_deref()
+                        .map(|f| f.display().to_string())
+                        .unwrap_or_else(|| s!("STDOUT"));
                     eprint!("Writing to {} ... ", output_filename);
                     cli::write_file_or_stdout(chunk, output).expect("unable to write to the file");
                     eprintln!("success");
