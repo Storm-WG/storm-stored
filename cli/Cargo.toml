@@ -21,15 +21,15 @@ internet2 = "0.8.0"
 microservices = { version = "0.8.0", default-features = false, features = ["cli"] }
 storm-core = "0.8.0"
 store_rpc = { version = "0.8.0", path = "../rpc" }
-clap = { version = "~3.1.18", features = ["derive", "env"] }
+clap = { version = "~3.2.23", features = ["derive", "env"] }
 log = "0.4.14"
 shellexpand = "2.1"
 colored = "2"
 
 [build-dependencies]
 amplify = "3.13.0"
-clap = { version = "~3.1.18", features = ["derive", "env"] }
-clap_complete = "~3.1.4"
+clap = { version = "~3.2.23", features = ["derive", "env"] }
+clap_complete = "~3.2.5"
 internet2 = "0.8.0"
 storm-core = "0.8.0"
 store_rpc = { version = "0.8.0", path = "../rpc" }
