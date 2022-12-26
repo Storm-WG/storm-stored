@@ -29,6 +29,8 @@ pub enum FailureCode {
 impl From<u16> for FailureCode {
     fn from(value: u16) -> Self {
         match value {
+            x if x == FailureCode::Database as u16 => FailureCode::Database,
+            x if x == FailureCode::Encoding as u16 => FailureCode::Encoding,
             _ => FailureCode::Unknown,
         }
     }

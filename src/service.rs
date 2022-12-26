@@ -120,7 +120,7 @@ impl Runtime {
 impl Runtime {
     pub(crate) fn rpc_process(&mut self, raw: Vec<u8>) -> Result<Reply, Reply> {
         trace!("Got {} bytes over ZMQ RPC", raw.len());
-        let request = (&*self.unmarshaller.unmarshall(raw.as_slice())?).clone();
+        let request = (*self.unmarshaller.unmarshall(raw.as_slice())?).clone();
         debug!("Received ZMQ RPC request #{}: {}", request.get_type(), request);
         match request {
             Request::Use(table) => self.use_table(table),
@@ -199,7 +199,7 @@ impl Runtime {
         let keys = tree
             .range::<&[u8], _>(..)
             .map(|res| match res {
-                Ok((ivec, _)) => Ok(ChunkId::from_slice(&*ivec)
+                Ok((ivec, _)) => Ok(ChunkId::from_slice(&ivec)
                     .map_err(|_| sled::Error::ReportableBug(s!("non-standard id")))?),
                 Err(e) => Err(e),
             })
@@ -212,7 +212,7 @@ impl Runtime {
         // TODO: Improve efficiency by restricting the range
         for res in tree.range::<&[u8], _>(..) {
             let (ivec, _) = res?;
-            let id = ChunkId::from_slice(&*ivec).map_err(|_| {
+            let id = ChunkId::from_slice(&ivec).map_err(|_| {
                 DaemonError::Encoding(strict_encoding::Error::DataIntegrityError(s!(
                     "invalid chunk id data"
                 )))

@@ -174,6 +174,6 @@ impl Client {
         trace!("Got reply ({} bytes), parsing: {:02X?}", raw.len(), raw);
         let reply = self.unmarshaller.unmarshall(raw.as_slice())?;
         trace!("Reply: {:?}", reply);
-        Ok((&*reply).clone())
+        Ok((*reply).clone())
     }
 }

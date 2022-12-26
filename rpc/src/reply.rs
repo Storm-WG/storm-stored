@@ -9,6 +9,8 @@
 // You should have received a copy of the MIT License along with this software.
 // If not, see <https://opensource.org/licenses/MIT>.
 
+#![allow(clippy::clone_on_copy)] // Caused by Api derivation on Reply type
+
 use std::collections::BTreeSet;
 
 use amplify::Slice32;
