@@ -5,7 +5,7 @@ members = [".", "rpc", "cli"]
 [package]
 name = "store_daemon"
 description = "Storage daemon"
-version = "0.8.1"
+version = "0.8.2"
 authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
 license = "MIT"
 keywords = ["daemon", "sled", "database"]
@@ -26,13 +26,13 @@ required-features = ["server"]
 [dependencies]
 # LNP/BP crates
 amplify = "3.13.0"
-strict_encoding = "0.8.1"
-commit_verify = "0.8.0"
-internet2 = { version = "0.8.0", features = ["keygen", "zmq"] }
-microservices = { version = "0.8.0", default-features = false, features = ["node"] }
+strict_encoding = "0.8.2"
+commit_verify = "0.8.2"
+internet2 = { version = "0.8.4", features = ["keygen", "zmq"] }
+microservices = { version = "0.8.10", default-features = false, features = ["node"] }
 bitcoin_hashes = "0.10.0"
 storm-core = "0.8.0"
-store_rpc = { version = "0.8.0", path = "rpc" }
+store_rpc = { version = "0.8.2", path = "rpc" }
 # DB
 sled = "0.34"
 # OS
@@ -50,10 +50,10 @@ rpassword = { version = "5.0.1", optional = true }
 
 [build-dependencies]
 amplify = "3.13.0"
-internet2 = "0.8.0"
-microservices = { version = "0.8.0", default-features = false }
+internet2 = "0.8.4"
+microservices = { version = "0.8.10", default-features = false }
 storm-core = "0.8.0"
-store_rpc = { version = "0.8.0", path = "rpc" }
+store_rpc = { version = "0.8.2", path = "rpc" }
 clap = { version = "~3.2.23", features = ["env", "derive"] }
 clap_complete = "~3.2.5"
 log = { version = "0.4", features = ["max_level_trace", "release_max_level_debug"] }
