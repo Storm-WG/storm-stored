@@ -1,7 +1,7 @@
 [package]
 name = "store_rpc"
 description = "Storage daemon RPC API"
-version = "0.9.0-rc.1"
+version = "0.9.0"
 authors = ["Dr. Maxim Orlovsky <orlovsky@lnp-bp.org>"]
 license = "MIT"
 keywords = ["daemon", "sled", "database"]
@@ -15,11 +15,11 @@ name = "store_rpc"
 
 [dependencies]
 amplify = "3.13.0"
-strict_encoding = "0.9.0-rc.2"
-commit_verify = "0.9.0-rc.1"
-internet2 = "0.9.0-rc.1"
-microservices = { version = "0.9.0-rc.1", default-features = false, features = ["client"] }
-storm-core = "0.9.0-rc.1"
+strict_encoding = "0.9.0"
+commit_verify = "0.9.0"
+internet2 = "0.9.0"
+microservices = { version = "0.9.0", default-features = false, features = ["client"] }
+storm-core = "0.9.0"
 rand = "0.8.5"
 serde_crate = { package = "serde", version = "1", features = ["derive"], optional = true }
 serde_with = { version = "1.14", optional = true }
